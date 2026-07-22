@@ -180,6 +180,37 @@ body::before {
 .cc-date .cn { font-family: var(--serif-tc); letter-spacing: .24em; }
 .cc-venue { font-family: var(--serif-tc); font-size: 12px; letter-spacing: .3em; text-indent: .3em; color: var(--rice-dim); }
 
+/* falling gold petals */
+.cover-petals { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+.cover-petals .petal {
+    position: absolute; top: -8%;
+    width: 12px; height: 12px; border-radius: 0 100% 0 100%;
+    background: linear-gradient(150deg, #f4dfae 0%, var(--cgold) 100%);
+    box-shadow: 0 0 6px rgba(216,173,97,.35);
+    opacity: .8; animation: coverFall linear infinite;
+}
+.cover-petals .p1  { left: 6%;  width: 14px; height: 14px; animation-duration: 9s; }
+.cover-petals .p2  { left: 15%; width: 9px;  height: 9px;  animation-duration: 12s;  animation-delay: 2s; }
+.cover-petals .p3  { left: 24%; width: 12px; height: 12px; animation-duration: 10.5s; animation-delay: 1s; }
+.cover-petals .p4  { left: 33%; width: 10px; height: 10px; animation-duration: 13.5s; animation-delay: 3.5s; }
+.cover-petals .p5  { left: 42%; width: 15px; height: 15px; animation-duration: 9.5s;  animation-delay: .6s; }
+.cover-petals .p6  { left: 50%; width: 9px;  height: 9px;  animation-duration: 12.5s; animation-delay: 2.4s; }
+.cover-petals .p7  { left: 59%; width: 12px; height: 12px; animation-duration: 11s;   animation-delay: 1.4s; }
+.cover-petals .p8  { left: 68%; width: 11px; height: 11px; animation-duration: 14s;   animation-delay: 3s; }
+.cover-petals .p9  { left: 77%; width: 13px; height: 13px; animation-duration: 10s;   animation-delay: .3s; }
+.cover-petals .p10 { left: 85%; width: 9px;  height: 9px;  animation-duration: 12.8s; animation-delay: 2.8s; }
+.cover-petals .p11 { left: 92%; width: 12px; height: 12px; animation-duration: 9.8s;  animation-delay: 1.8s; }
+.cover-petals .p12 { left: 97%; width: 10px; height: 10px; animation-duration: 13s;   animation-delay: 4s; }
+@keyframes coverFall {
+    0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+    12%  { opacity: .85; }
+    50%  { transform: translateY(45vh) translateX(22px) rotate(200deg); }
+    90%  { opacity: .85; }
+    100% { transform: translateY(112vh) translateX(-10px) rotate(400deg); opacity: 0; }
+}
+.cover.open .cover-petals { opacity: 0; transition: opacity .5s ease; }
+@media (prefers-reduced-motion: reduce) { .cover-petals { display: none; } }
+
 /* opened state — halves slide apart, content fades, reveal the site */
 .cover.open .cover-half-l { transform: translateX(-100%); }
 .cover.open .cover-half-r { transform: translateX(100%); }
