@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翔鴻 & 晏瑜 · 婚禮邀請 Wedding Invitation</title>
+    <meta name="description" content="翔鴻 & 晏瑜 誠摯邀請您參加我們的婚禮 — 2026.10.25 · 台北晶華酒店">
+    <meta property="og:title" content="翔鴻 & 晏瑜 婚禮邀請">
+    <meta property="og:description" content="2026.10.25 (日) · 台北晶華酒店 · 誠摯邀請您一同見證我們的幸福時刻">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="images/hero.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+TC:wght@200;300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- ============ COVER — Lacquer Gatefold ============ -->
+    <div class="cover" id="cover">
+        <div class="cover-half cover-half-l"><div class="lacquer"></div></div>
+        <div class="cover-half cover-half-r"><div class="lacquer"></div></div>
+
+        <div class="cover-content" id="coverContent">
+            <p class="cover-kicker">謹 訂 於</p>
+
+            <div class="cover-names" aria-label="翔鴻與晏瑜">
+                <div class="cover-name">晏瑜</div>
+                <div class="cover-spine"></div>
+                <div class="cover-name">翔鴻</div>
+            </div>
+
+            <div class="cover-seal-wrap">
+                <button class="cover-seal" id="coverSeal" aria-label="開啟囍帖">
+                    <svg viewBox="0 0 100 100" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="waxfill" cx="42%" cy="40%" r="72%">
+                                <stop offset="0%" stop-color="#b52a1e" />
+                                <stop offset="55%" stop-color="#8f1a12" />
+                                <stop offset="100%" stop-color="#5e0d08" />
+                            </radialGradient>
+                            <filter id="waxshadow" x="-40%" y="-40%" width="180%" height="180%">
+                                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#160202" flood-opacity="0.5" />
+                            </filter>
+                            <filter id="speckle">
+                                <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="4" result="n" />
+                                <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.04  0 0 0 0 0.01  0 0 0 0 0.01  0 0 0 0.55 0" />
+                            </filter>
+                            <clipPath id="blobclip">
+                                <path d="M50,9 C63,8 74,13 81,23 C86,30 91,39 90,49 C89,61 84,72 74,80 C66,86 57,91 47,90 C37,89 25,85 18,76 C11,67 8,56 10,45 C12,34 18,22 29,15 C35,11 43,10 50,9 Z" />
+                            </clipPath>
+                        </defs>
+                        <path d="M50,9 C63,8 74,13 81,23 C86,30 91,39 90,49 C89,61 84,72 74,80 C66,86 57,91 47,90 C37,89 25,85 18,76 C11,67 8,56 10,45 C12,34 18,22 29,15 C35,11 43,10 50,9 Z" fill="url(#waxfill)" filter="url(#waxshadow)" />
+                        <g clip-path="url(#blobclip)">
+                            <rect x="0" y="0" width="100" height="100" filter="url(#speckle)" opacity="0.13" />
+                            <path d="M50,9 C63,8 74,13 81,23 C86,30 91,39 90,49 C89,61 84,72 74,80 C66,86 57,91 47,90 C37,89 25,85 18,76 C11,67 8,56 10,45 C12,34 18,22 29,15 C35,11 43,10 50,9 Z" fill="none" stroke="#c8452f" stroke-width="1.4" stroke-opacity="0.4" transform="translate(0,-0.9)" />
+                            <path d="M50,9 C63,8 74,13 81,23 C86,30 91,39 90,49 C89,61 84,72 74,80 C66,86 57,91 47,90 C37,89 25,85 18,76 C11,67 8,56 10,45 C12,34 18,22 29,15 C35,11 43,10 50,9 Z" fill="none" stroke="#370604" stroke-width="2.2" stroke-opacity="0.5" transform="translate(0,1.3)" />
+                        </g>
+                    </svg>
+                    <span class="cover-seal-char">囍</span>
+                </button>
+                <div class="cover-hint">輕觸緘印 · 啟</div>
+            </div>
+
+            <div class="cover-colophon">
+                <div class="cc-latin">XiangHong &amp; YanYu</div>
+                <div class="cc-date">2026 · 10 · 25　<span class="cn">星期日</span></div>
+                <div class="cc-venue">台北晶華酒店</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ NAV ============ -->
+    <nav class="nav" id="nav">
+        <a href="#home" class="nav-logo">囍</a>
+        <button class="nav-toggle" id="navToggle" aria-label="選單">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="#home">首頁</a></li>
+            <li><a href="#invite">婚訊</a></li>
+            <li><a href="#details">資訊</a></li>
+            <li><a href="#gallery">影像</a></li>
+            <li><a href="#rsvp">回覆</a></li>
+        </ul>
+    </nav>
+    <button class="menu-close" id="menuClose" aria-label="關閉選單">&times;</button>
+
+    <!-- ============ HERO ============ -->
+    <header id="home" class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-veil"></div>
+        <div class="hero-inner">
+            <p class="hero-eyebrow">誠摯邀請 · You are invited</p>
+            <h1 class="hero-names">
+                <span class="hn">翔鴻</span>
+                <span class="hero-amp">&amp;</span>
+                <span class="hn">晏瑜</span>
+            </h1>
+            <div class="hero-rule"><i></i><em>囍</em><i></i></div>
+            <p class="hero-date">2026 . 10 . 25　星期日</p>
+            <p class="hero-place">台北晶華酒店</p>
+            <div class="hero-ctas">
+                <a href="#invite" class="btn btn-line hero-cta2">婚禮資訊</a>
+                <a href="#rsvp" class="btn btn-solid hero-cta">出席回覆 RSVP</a>
+            </div>
+        </div>
+        <a href="#invite" class="scroll-cue" aria-label="向下滑動探索更多">
+            <span class="sc-mouse"><i></i></span>
+            <svg class="sc-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            <span class="sc-label">向下滑動 · 探索更多</span>
+        </a>
+    </header>
+
+    <!-- ============ COUNTDOWN ============ -->
+    <section class="countdown-wrap">
+        <div class="cloud-divider top" aria-hidden="true"></div>
+        <p class="cd-title">距離我們的大喜之日</p>
+        <div class="countdown" id="countdown">
+            <div class="cd-item"><b id="cdD">--</b><small>天</small></div>
+            <div class="cd-sep">·</div>
+            <div class="cd-item"><b id="cdH">--</b><small>時</small></div>
+            <div class="cd-sep">·</div>
+            <div class="cd-item"><b id="cdM">--</b><small>分</small></div>
+            <div class="cd-sep">·</div>
+            <div class="cd-item"><b id="cdS">--</b><small>秒</small></div>
+        </div>
+        <p class="cd-note" id="cdNote">2026 年 10 月 25 日 · 台北晶華酒店</p>
+    </section>
+
+    <!-- ============ INVITATION ============ -->
+    <section id="invite" class="section invite">
+        <div class="container narrow">
+            <div class="sec-head">
+                <span class="sec-kicker">Invitation</span>
+                <h2 class="sec-title">我們要結婚啦</h2>
+                <div class="gold-flourish" aria-hidden="true"></div>
+            </div>
+            <p class="invite-lead">親愛的長輩、親戚與朋友們：</p>
+            <p class="invite-text">
+                我們曾各自奔赴人海，直到目光交匯的那一刻，才懂歸屬感的意義。<br>
+                誠邀生命中重要的你，來見證這場「雙向奔赴」的圓滿；<br>
+                願有你的見證，讓往後的每一個平凡日子，都閃著光。
+            </p>
+            <p class="invite-sign">
+                <span>新人　蕭翔鴻 · 劉晏瑜　敬邀</span>
+            </p>
+            <blockquote class="invite-quote">
+                「以歲月為證，以白首為期。」
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- ============ DETAILS ============ -->
+    <section id="details" class="section details">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-kicker">The Details</span>
+                <h2 class="sec-title">婚宴資訊</h2>
+                <div class="gold-flourish" aria-hidden="true"></div>
+            </div>
+
+            <div class="detail-grid">
+                <!-- WHEN -->
+                <article class="detail-card">
+                    <div class="detail-ic" aria-hidden="true">
+                        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1">
+                            <rect x="3.5" y="5" width="17" height="15.5" rx="2"/>
+                            <path d="M3.5 9.5h17M8 3v4M16 3v4"/>
+                            <path d="M7.5 13.5h3M13.5 13.5h3M7.5 17h3M13.5 17h3"/>
+                        </svg>
+                    </div>
+                    <h3>婚宴時間</h3>
+                    <p class="detail-big">2026 年 10 月 25 日</p>
+                    <p class="detail-sub">星期日 · 農曆九月十六</p>
+                    <hr class="hair">
+                    <ul class="detail-list">
+                        <li><span>入場</span><b>17:30</b></li>
+                        <li><span>婚宴</span><b>18:00 – 22:00</b></li>
+                    </ul>
+                    <p class="detail-tip">✦ 當日適逢光復節連假，隔日補假，歡迎盡早入席同歡。</p>
+                </article>
+
+                <!-- WHERE -->
+                <article class="detail-card">
+                    <div class="detail-ic" aria-hidden="true">
+                        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1">
+                            <path d="M12 21.5c4.2-4 6.5-7.4 6.5-10.8a6.5 6.5 0 1 0-13 0c0 3.4 2.3 6.8 6.5 10.8z"/>
+                            <circle cx="12" cy="10.4" r="2.6"/>
+                        </svg>
+                    </div>
+                    <h3>婚宴地點</h3>
+                    <p class="detail-big">台北晶華酒店</p>
+                    <p class="detail-sub">Regent Taipei · 3 樓宴會廳</p>
+                    <hr class="hair">
+                    <p class="detail-addr">台北市中山區中山北路二段 39 巷 3 號</p>
+                    <ul class="transit-list">
+                        <li>
+                            <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1">
+                                <rect x="6" y="3.5" width="12" height="13" rx="3.5"/>
+                                <path d="M6 11h12"/><circle cx="9" cy="13.6" r="1"/><circle cx="15" cy="13.6" r="1"/>
+                                <path d="M8.5 16.5l-2 4M15.5 16.5l2 4"/>
+                            </svg>
+                            <span>捷運淡水信義線（紅線）至 <b>中山站</b>，3 號或 4 號出口步行約 7–10 分鐘。</span>
+                        </li>
+                        <li>
+                            <svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1">
+                                <path d="M4.5 16l1.2-4.8A2.5 2.5 0 0 1 8.1 9.3h7.8a2.5 2.5 0 0 1 2.4 1.9L19.5 16"/>
+                                <path d="M3.8 16h16.4v3.2a.8.8 0 0 1-.8.8h-1.6a.8.8 0 0 1-.8-.8V19H7v.2a.8.8 0 0 1-.8.8H4.6a.8.8 0 0 1-.8-.8z"/>
+                                <path d="M7 13h10"/>
+                            </svg>
+                            <span>備有停車場，車位有限，建議提早抵達。</span>
+                        </li>
+                    </ul>
+                    <div class="detail-actions">
+                        <a class="btn btn-solid" target="_blank" rel="noopener"
+                            href="https://maps.app.goo.gl/2hbV553qevMfoLXA8">地圖導航</a>
+                        <a class="btn btn-line" target="_blank" rel="noopener"
+                            href="https://www.regenttaiwan.com/">飯店官網</a>
+                    </div>
+                </article>
+            </div>
+
+            <div class="map-frame">
+                <iframe
+                    src="https://www.google.com/maps?q=台北晶華酒店+台北市中山區中山北路二段39巷3號&output=embed"
+                    width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade" title="婚宴地點地圖"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ GALLERY ============ -->
+    <section id="gallery" class="section gallery">
+        <div class="container">
+            <div class="sec-head">
+                <span class="sec-kicker">Our Story in Photos</span>
+                <h2 class="sec-title">影像故事</h2>
+                <div class="gold-flourish" aria-hidden="true"></div>
+                <p class="gallery-lead">從海角到山邊，從晨光到黃昏 —<br>這些畫面，記錄著我們一路走來、每一次怦然心動的瞬間。</p>
+            </div>
+
+            <!-- desktop / tablet: mosaic gallery with text tiles -->
+            <div class="grid" id="grid">
+                <figure class="g-item wide" data-full="images/hero.jpg" data-cap="相擁一生 · Forever">
+                    <img src="images/hero-thumb.jpg" alt="海邊相擁" loading="lazy">
+                    <figcaption>相擁一生</figcaption>
+                </figure>
+                <div class="g-text">
+                    <span class="gt-en">The Ocean's Vow</span>
+                    <p class="gt-cn">以海為誓<br>以歲月為證</p>
+                    <span class="gt-xi">囍</span>
+                </div>
+                <figure class="g-item" data-full="images/g01-car.jpg" data-cap="海邊漫遊 · A Drive by the Sea">
+                    <img src="images/g01-car-thumb.jpg" alt="海邊紅色古董車" loading="lazy">
+                    <figcaption>海邊漫遊</figcaption>
+                </figure>
+                <figure class="g-item tall" data-full="images/g06-groom.jpg" data-cap="新郎 · The Groom">
+                    <img src="images/g06-groom-thumb.jpg" alt="新郎" loading="lazy">
+                    <figcaption>新郎</figcaption>
+                </figure>
+                <figure class="g-item" data-full="images/g04.jpg" data-cap="海誓山盟 · Vows by the Ocean">
+                    <img src="images/g04-thumb.jpg" alt="海崖旁的婚紗" loading="lazy">
+                    <figcaption>海誓山盟</figcaption>
+                </figure>
+                <figure class="g-item" data-full="images/g03-carry.jpg" data-cap="執子之手 · In My Arms">
+                    <img src="images/g03-carry-thumb.jpg" alt="沙灘上公主抱" loading="lazy">
+                    <figcaption>執子之手</figcaption>
+                </figure>
+                <figure class="g-item wide" data-full="images/g05-redroom.jpg" data-cap="囍結良緣 · Double Happiness">
+                    <img src="images/g05-redroom-thumb.jpg" alt="中式囍字佈置" loading="lazy">
+                    <figcaption>囍結良緣</figcaption>
+                </figure>
+                <figure class="g-item tall" data-full="images/g09.jpg" data-cap="此刻 · The Moment">
+                    <img src="images/g09-thumb.jpg" alt="教堂內的新人" loading="lazy">
+                    <figcaption>此刻</figcaption>
+                </figure>
+                <figure class="g-item" data-full="images/g02-bride.jpg" data-cap="新娘 · The Bride">
+                    <img src="images/g02-bride-thumb.jpg" alt="新娘與捧花" loading="lazy">
+                    <figcaption>新娘</figcaption>
+                </figure>
+                <div class="g-text">
+                    <span class="gt-en">Forever Begins</span>
+                    <p class="gt-cn">此生所愛<br>唯有一人</p>
+                    <span class="gt-xi">囍</span>
+                </div>
+                <figure class="g-item" data-full="images/g08-ceremony.jpg" data-cap="禮成 · The Ceremony">
+                    <img src="images/g08-ceremony-thumb.jpg" alt="儀式親吻" loading="lazy">
+                    <figcaption>禮成</figcaption>
+                </figure>
+                <figure class="g-item" data-full="images/g07-umbrella.jpg" data-cap="滿滿祝福 · Blessings">
+                    <img src="images/g07-umbrella-thumb.jpg" alt="祝福合影" loading="lazy">
+                    <figcaption>滿滿祝福</figcaption>
+                </figure>
+            </div>
+
+            <!-- mobile: swipe-through-photos deck (polaroid stack) -->
+            <div class="deck" id="deck">
+                <div class="deck-deco" aria-hidden="true">
+                    <svg class="dd dd1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-9.5A3.5 3.5 0 0 1 12 8a3.5 3.5 0 0 1 7 3.5C19 16.5 12 21 12 21z"/></svg>
+                    <svg class="dd dd2" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z"/></svg>
+                    <svg class="dd dd3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z"/></svg>
+                </div>
+                <div class="deck-stage" id="deckStage"></div>
+                <div class="deck-ctrl">
+                    <button class="deck-btn" id="deckPrev" aria-label="上一張">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"/></svg>
+                    </button>
+                    <div class="deck-dots" id="deckDots"></div>
+                    <button class="deck-btn" id="deckNext" aria-label="下一張">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+                <p class="deck-hint">左右滑動，像翻閱照片一樣 · 輕觸放大</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ RSVP ============ -->
+    <section id="rsvp" class="section rsvp">
+        <div class="container narrow">
+            <div class="sec-head">
+                <span class="sec-kicker">R.S.V.P</span>
+                <h2 class="sec-title">出席回覆</h2>
+                <div class="gold-flourish light" aria-hidden="true"></div>
+            </div>
+            <p class="rsvp-desc">
+                為了給您更好的座位與餐點安排，敬請於百忙之中撥冗填寫以下回覆。<br>
+                您的每一份心意，都是我們最珍貴的祝福。
+            </p>
+
+            <form id="rsvpForm" class="rsvp-form" novalidate>
+                <div class="fg">
+                    <label for="f_name">姓名 <i>*</i></label>
+                    <input id="f_name" name="name" type="text" required autocomplete="name">
+                </div>
+                <div class="fg">
+                    <label for="f_email">Email <i>*</i></label>
+                    <input id="f_email" name="email" type="email" required placeholder="example@gmail.com" autocomplete="email">
+                </div>
+                <div class="fg">
+                    <label for="f_attend">是否出席婚禮？ <i>*</i></label>
+                    <select id="f_attend" name="attend" required>
+                        <option value="" disabled selected>請選擇</option>
+                        <option value="參加，必須參加">參加，必須參加</option>
+                        <option value="無法出席😭">遺憾無法出席</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label for="f_relation">與我們的關係 <i>*</i></label>
+                    <select id="f_relation" name="relation" required>
+                        <option value="" disabled selected>請選擇</option>
+                        <option value="家人/親戚">家人 / 親戚</option>
+                        <option value="朋友">朋友</option>
+                        <option value="同事">同事</option>
+                        <option value="__other">其他…</option>
+                    </select>
+                </div>
+                <div class="fg is-hidden" id="relOtherWrap">
+                    <label for="f_relation_other">請填寫與我們的關係</label>
+                    <input id="f_relation_other" name="relation_other" type="text" placeholder="例如：大學同學、鄰居">
+                </div>
+                <div class="fg">
+                    <label for="f_count">出席人數 <i>*</i></label>
+                    <input id="f_count" name="count" type="text" required placeholder="例如：2 位（王小明、王小美），方便安排座位">
+                </div>
+                <div class="fg">
+                    <label for="f_baby">是否需要兒童座椅？</label>
+                    <input id="f_baby" name="baby" type="text" placeholder="需要請填數量，不需要可留空">
+                </div>
+                <div class="fg">
+                    <label for="f_diet">飲食習慣</label>
+                    <select id="f_diet" name="diet">
+                        <option value="" disabled selected>請選擇</option>
+                        <option value="葷">葷</option>
+                        <option value="素">素</option>
+                    </select>
+                </div>
+                <div class="fg">
+                    <label for="f_car">是否開車前往？</label>
+                    <input id="f_car" name="car" type="text" placeholder="可免費停車，車位有限請提早">
+                </div>
+                <div class="fg">
+                    <label for="f_seat">座位安排需求</label>
+                    <textarea id="f_seat" name="seat" rows="2" placeholder="想坐搖滾區，或想／不想與誰同桌，都可以悄悄告訴我們"></textarea>
+                </div>
+                <div class="fg">
+                    <label for="f_contact">聯絡方式</label>
+                    <input id="f_contact" name="contact" type="text" placeholder="手機號碼 / Line ID">
+                </div>
+                <div class="fg">
+                    <label for="f_words">想對我們說的話</label>
+                    <textarea id="f_words" name="words" rows="3" placeholder="有什麼想說的，請暢所欲言 ♥"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-solid lg rsvp-submit" id="rsvpSubmit">送出回覆</button>
+                <p class="rsvp-status" id="rsvpStatus" role="status"></p>
+            </form>
+
+            <div class="rsvp-foot">
+                <button class="btn btn-line" id="calBtn">加入行事曆</button>
+                <a class="rsvp-alt" target="_blank" rel="noopener"
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSctGh7pWUrNPjCQebD256VH_ZgslGA7gkVcPljw2pbNYONFjQ/viewform">
+                    或前往 Google 表單填寫 →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer">
+        <div class="foot-xi">囍</div>
+        <p class="foot-names">翔鴻 &amp; 晏瑜</p>
+        <p class="foot-date">2026 . 10 . 25 · 台北晶華酒店</p>
+        <p class="foot-thanks">期待與您相遇，共享這份喜悅</p>
+    </footer>
+
+    <!-- ============ LIGHTBOX ============ -->
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+        <button class="lb-close" id="lbClose" aria-label="關閉">&times;</button>
+        <button class="lb-nav lb-prev" id="lbPrev" aria-label="上一張">&#10094;</button>
+        <figure class="lb-stage">
+            <img src="" alt="" id="lbImg">
+            <figcaption id="lbCap"></figcaption>
+        </figure>
+        <button class="lb-nav lb-next" id="lbNext" aria-label="下一張">&#10095;</button>
+        <div class="lb-count" id="lbCount"></div>
+    </div>
+
+    <!-- ============ MUSIC ============ -->
+    <audio id="bgm" loop preload="none">
+        <source src="Bgmusic/LuckyMe.mp3" type="audio/mpeg">
+    </audio>
+    <button class="music-btn" id="musicBtn" aria-label="音樂開關">
+        <svg viewBox="0 0 24 24" class="ic-on" style="display:none">
+            <path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z" />
+        </svg>
+        <svg viewBox="0 0 24 24" class="ic-off">
+            <path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z" />
+            <line x1="3" y1="3" x2="21" y2="21" stroke="currentColor" stroke-width="2" />
+        </svg>
+    </button>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
