@@ -450,7 +450,13 @@ body::before {
 .details-hotel {
     position: absolute; inset: 0; z-index: 0; pointer-events: none;
     background:
-        linear-gradient(180deg, rgba(247,242,232,.80) 0%, rgba(247,242,232,.74) 40%, rgba(239,230,213,.90) 100%),
+        linear-gradient(180deg,
+            var(--ivory) 0%,
+            rgba(247,242,232,.94) 6%,
+            rgba(247,242,232,.72) 15%,
+            rgba(247,242,232,.70) 55%,
+            rgba(239,230,213,.86) 88%,
+            var(--paper) 100%),
         url("images/hotel.jpg") center 16%/cover no-repeat;
     filter: grayscale(.18) contrast(.98);
 }
