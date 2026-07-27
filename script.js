@@ -328,6 +328,55 @@ document.addEventListener('DOMContentLoaded', () => {
             rows[gi].appendChild(buildSet());
             rows[gi].appendChild(buildSet());   // duplicate → seamless loop
         });
+
+        // gentle auto-drift + manual scroll / grab-to-pan (pauses while you interact)
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const conf = [
+            { el: rows[0], dir: 1, speed: reduce ? 0 : 0.55 },
+            { el: rows[1], dir: -1, speed: reduce ? 0 : 0.42 }
+        ];
+        let hovering = false, dragging = false;
+        marquee.addEventListener('pointerenter', () => hovering = true);
+        marquee.addEventListener('pointerleave', () => hovering = false);
+
+        conf.forEach(rc => {
+            const row = rc.el;
+            let down = false, sx = 0, sl = 0, moved = false;
+            row.addEventListener('pointerdown', e => {
+                down = true; dragging = true; moved = false;
+                sx = e.clientX; sl = row.scrollLeft; row.classList.add('grabbing');
+                try { row.setPointerCapture(e.pointerId); } catch (_) {}
+            });
+            row.addEventListener('pointermove', e => {
+                if (!down) return;
+                const dx = e.clientX - sx;
+                if (Math.abs(dx) > 4) moved = true;
+                row.scrollLeft = sl - dx;
+            });
+            const end = () => { down = false; dragging = false; row.classList.remove('grabbing'); };
+            row.addEventListener('pointerup', end);
+            row.addEventListener('pointercancel', end);
+            row.addEventListener('pointerleave', end);
+            // suppress the lightbox click if the pointer was dragged
+            row.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
+        });
+
+        const startDrift = () => {
+            conf.forEach(rc => { if (rc.dir < 0) rc.el.scrollLeft = rc.el.scrollWidth / 2; });
+            const tick = () => {
+                conf.forEach(rc => {
+                    const cw = rc.el.scrollWidth / 2;
+                    if (!hovering && !dragging && rc.speed) rc.el.scrollLeft += rc.speed * rc.dir;
+                    if (rc.el.scrollLeft >= cw) rc.el.scrollLeft -= cw;
+                    else if (rc.el.scrollLeft <= 0) rc.el.scrollLeft += cw;
+                });
+                requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        };
+        // measure after the thumbnails have sized the cards
+        if (document.readyState === 'complete') requestAnimationFrame(startDrift);
+        else window.addEventListener('load', () => requestAnimationFrame(startDrift));
     }
 
     /* ---------------------------------------------------

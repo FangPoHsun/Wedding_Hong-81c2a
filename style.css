@@ -521,9 +521,12 @@ body::before {
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
             mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
-.marquee-row { display: flex; width: max-content; will-change: transform; animation: marqueeX 62s linear infinite; }
-.marquee-row.rev { animation-duration: 78s; animation-direction: reverse; }
-.marquee:hover .marquee-row { animation-play-state: paused; }
+.marquee-row {
+    display: flex; overflow-x: auto; overflow-y: hidden; padding: 20px 0; cursor: grab;
+    scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior-x: contain;
+}
+.marquee-row::-webkit-scrollbar { display: none; }
+.marquee-row.grabbing { cursor: grabbing; }
 
 .marquee-card {
     position: relative; flex: 0 0 auto; height: clamp(240px, 29vw, 336px);
@@ -566,11 +569,6 @@ body::before {
 .mc-quote .mq-cn { font-family: var(--serif-tc); font-weight: 500; color: var(--red-deep); letter-spacing: .18em; font-size: 1.2rem; line-height: 1.7; text-align: center; }
 .mc-quote .mq-xi { font-family: var(--serif-tc); font-weight: 700; color: var(--gold); font-size: 1.25rem; }
 
-@keyframes marqueeX { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-    .marquee-row { animation: none; }
-    .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
-}
 
 /* --- mobile: swipe-through-photos deck (polaroid stack) --- */
 .deck { display: none; position: relative; }
