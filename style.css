@@ -445,7 +445,17 @@ body::before {
 /* =========================================================
    DETAILS
    ========================================================= */
-.details { background: linear-gradient(180deg, var(--ivory), var(--ivory-2)); }
+.details { background: linear-gradient(180deg, var(--ivory), var(--ivory-2)); position: relative; overflow: hidden; }
+/* faded Regent Taipei watermark that fades in on scroll — "shows the location" */
+.details-hotel {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+        linear-gradient(180deg, rgba(247,242,232,.80) 0%, rgba(247,242,232,.74) 40%, rgba(239,230,213,.90) 100%),
+        url("images/hotel.jpg") center 16%/cover no-repeat;
+    filter: grayscale(.18) contrast(.98);
+}
+.details-hotel.reveal { transform: none; transition: opacity 1.8s ease; }
+.details > .container { position: relative; z-index: 1; }
 .detail-grid {
     display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;
     margin-bottom: 40px;
