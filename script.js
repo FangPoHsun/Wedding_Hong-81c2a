@@ -175,11 +175,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const deckDots = document.getElementById('deckDots');
     const deckPrev = document.getElementById('deckPrev');
     const deckNext = document.getElementById('deckNext');
-    const photos = items.map(f => ({
-        full: f.dataset.full,
-        cap: (f.dataset.cap || '').split('·')[0].trim(),
-        thumb: f.querySelector('img').getAttribute('src')
-    }));
+    const photos = items.map(f => {
+        const im = f.querySelector('img');
+        return {
+            full: f.dataset.full,
+            cap: (f.dataset.cap || '').split('·')[0].trim(),
+            thumb: im.getAttribute('src'),
+            w: im.getAttribute('width') || '',
+            h: im.getAttribute('height') || ''
+        };
+    });
 
     if (deckStage && photos.length) {
         let cur = 0;
@@ -190,15 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const cards = photos.map((p, i) => {
             const card = document.createElement('div');
             card.className = 'deck-card';
+            // reserve orientation up-front (from known dimensions) so nothing reflows on load
+            card.classList.add(Number(p.h) > Number(p.w) ? 'port' : 'land');
             card.innerHTML =
-                `<div class="photo"><img src="${p.thumb}" alt=""></div>` +
+                `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div>` +
                 `<div class="polaroid-cap">${p.cap}</div>`;
-            const img = card.querySelector('img');
-            const setOrient = () => card.classList.add(
-                (img.naturalWidth && img.naturalHeight && img.naturalHeight > img.naturalWidth) ? 'port' : 'land'
-            );
-            if (img.complete && img.naturalWidth) setOrient();
-            else img.addEventListener('load', () => { setOrient(); layout(); });
             card.addEventListener('pointerdown', onDown);
             deckStage.appendChild(card);
             const dot = document.createElement('i');
@@ -300,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const makeCard = (p, idx) => {
             const card = document.createElement('div');
             card.className = 'marquee-card';
-            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
+            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
             card.addEventListener('click', () => openLb(idx));
             return card;
         };
