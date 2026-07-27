@@ -505,61 +505,72 @@ body::before {
 .map-frame iframe { filter: saturate(.9) contrast(1.02); }
 
 /* =========================================================
-   GALLERY — desktop mosaic (with text tiles) + mobile photo deck
+   GALLERY — desktop cinematic marquee + mobile photo deck
    ========================================================= */
-.gallery { background: var(--paper); }
+.gallery { background: var(--paper); overflow: hidden; }
 .gallery-lead {
     margin: 20px auto 0; max-width: 620px; color: var(--ink-soft);
     line-height: 2.1; letter-spacing: .05em; font-size: 1.02rem;
 }
+/* hidden data source (feeds lightbox / marquee / deck) */
+.grid { display: none; }
 
-/* --- desktop mosaic --- */
-.grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 200px; grid-auto-flow: dense; gap: 14px;
+/* --- desktop cinematic dual-row marquee --- */
+.marquee {
+    margin-top: 46px; display: flex; flex-direction: column; gap: 24px; overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
-.g-item {
-    position: relative; overflow: hidden; border-radius: 4px; cursor: pointer;
-    grid-column: span 1; grid-row: span 1;
-    box-shadow: 0 18px 40px -28px rgba(60,30,20,.6);
-}
-.g-item.wide { grid-column: span 2; }
-.g-item.tall { grid-row: span 2; }
-.g-item img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform .8s cubic-bezier(.2,.7,.2,1);
-}
-.g-item::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(140,31,26,.55), transparent 55%);
-    opacity: 0; transition: opacity .4s ease;
-}
-.g-item figcaption {
-    position: absolute; left: 16px; bottom: 12px; z-index: 2;
-    color: var(--ivory); letter-spacing: .18em; font-size: 1.05rem;
-    opacity: 0; transform: translateY(8px); transition: all .4s ease; text-shadow: 0 2px 8px rgba(0,0,0,.5);
-}
-.g-item::before {
-    content: ""; position: absolute; inset: 8px; z-index: 2;
-    border: 1px solid rgba(220,189,126,.75); opacity: 0; transition: opacity .4s ease; pointer-events: none;
-}
-.g-item:hover img { transform: scale(1.08); }
-.g-item:hover::after { opacity: 1; }
-.g-item:hover figcaption { opacity: 1; transform: translateY(0); }
-.g-item:hover::before { opacity: 1; }
+.marquee-row { display: flex; width: max-content; will-change: transform; animation: marqueeX 62s linear infinite; }
+.marquee-row.rev { animation-duration: 78s; animation-direction: reverse; }
+.marquee:hover .marquee-row { animation-play-state: paused; }
 
-/* text tiles that fill the mosaic's empty space */
-.g-text {
-    grid-column: span 1; grid-row: span 1;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; gap: 8px; padding: 20px;
+.marquee-card {
+    position: relative; flex: 0 0 auto; height: clamp(240px, 29vw, 336px);
+    margin-right: 24px; border-radius: 3px; overflow: hidden; cursor: pointer;
+    background: #fdfaf2; padding: 10px 10px 34px;               /* polaroid frame */
+    box-shadow: 0 20px 40px -24px rgba(60,30,20,.6), 0 2px 6px rgba(60,30,20,.12);
+    transform: rotate(var(--tilt, 0deg)); transform-origin: center bottom;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease;
+}
+.marquee-card .mc-photo { height: 100%; overflow: hidden; border-radius: 2px; background: #ece3d3; }
+.marquee-card img { height: 100%; width: auto; display: block; }
+.marquee-card .mc-cap {
+    position: absolute; left: 0; right: 0; bottom: 8px; text-align: center;
+    color: var(--red-deep); letter-spacing: .16em; font-size: .98rem; opacity: .82; transition: all .4s ease;
+}
+.marquee-card::after {                                          /* gold inner frame on hover */
+    content: ""; position: absolute; left: 10px; right: 10px; top: 10px; bottom: 34px;
+    border: 1px solid rgba(200,169,106,.6); opacity: 0; transition: opacity .4s ease; pointer-events: none;
+}
+.marquee-card:hover {
+    transform: rotate(0deg) scale(1.05) translateY(-6px); z-index: 3;
+    box-shadow: 0 34px 62px -26px rgba(60,30,20,.72);
+}
+.marquee-card:hover::after { opacity: 1; }
+.marquee-card:hover .mc-cap { opacity: 1; color: var(--red); }
+/* subtle alternating tilt — an editorial, hand-laid feel */
+.marquee-row .marquee-card:nth-child(odd)  { --tilt: -1.6deg; }
+.marquee-row .marquee-card:nth-child(even) { --tilt:  1.4deg; }
+
+/* quote card woven into the strip */
+.marquee-card.mc-quote {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    width: clamp(220px, 22vw, 300px); padding: 24px; cursor: default;
     background: linear-gradient(150deg, var(--ivory-2), var(--paper));
-    border: 1px solid rgba(200,169,106,.5); border-radius: 4px;
-    box-shadow: inset 0 0 0 3px rgba(251,248,241,.6);
+    border: 1px solid rgba(200,169,106,.5);
+    box-shadow: 0 20px 40px -26px rgba(60,30,20,.5), inset 0 0 0 3px rgba(251,248,241,.6);
 }
-.gt-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .22em; color: var(--gold-deep); font-size: 1rem; }
-.gt-cn { font-family: var(--serif-tc); font-weight: 500; color: var(--red-deep); letter-spacing: .18em; font-size: 1.25rem; line-height: 1.7; }
-.gt-xi { font-family: var(--serif-tc); font-weight: 700; color: var(--gold); font-size: 1.3rem; }
+.marquee-card.mc-quote:hover { transform: rotate(0deg) translateY(-4px); }
+.mc-quote .mq-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .22em; color: var(--gold-deep); font-size: 1rem; }
+.mc-quote .mq-cn { font-family: var(--serif-tc); font-weight: 500; color: var(--red-deep); letter-spacing: .18em; font-size: 1.2rem; line-height: 1.7; text-align: center; }
+.mc-quote .mq-xi { font-family: var(--serif-tc); font-weight: 700; color: var(--gold); font-size: 1.25rem; }
+
+@keyframes marqueeX { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+    .marquee-row { animation: none; }
+    .marquee { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+}
 
 /* --- mobile: swipe-through-photos deck (polaroid stack) --- */
 .deck { display: none; position: relative; }
@@ -764,8 +775,9 @@ body::before {
     .sc-mouse { display: none; }
     .sc-chevron { display: block; }
 
-    /* mobile gallery: swipe-through-photos deck instead of the mosaic */
+    /* mobile gallery: swipe-through-photos deck instead of the marquee */
     .grid { display: none; }
+    .marquee { display: none; }
     .deck { display: block; }
     .gallery-lead { font-size: .96rem; }
 }

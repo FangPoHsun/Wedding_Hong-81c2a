@@ -288,9 +288,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ---------------------------------------------------
+       Gallery — desktop cinematic dual-row marquee
+       --------------------------------------------------- */
+    const marquee = document.getElementById('marquee');
+    if (marquee && photos.length) {
+        const rows = marquee.querySelectorAll('.marquee-row');
+        const quotes = [
+            { en: "The Ocean's Vow", cn: '以海為誓<br>以歲月為證' },
+            { en: 'Forever Begins', cn: '此生所愛<br>唯有一人' }
+        ];
+        const mid = Math.ceil(photos.length / 2);
+        const groups = [
+            { list: photos.slice(0, mid), offset: 0, quote: quotes[0] },
+            { list: photos.slice(mid), offset: mid, quote: quotes[1] }
+        ];
+        const makeCard = (p, idx) => {
+            const card = document.createElement('div');
+            card.className = 'marquee-card';
+            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
+            card.addEventListener('click', () => openLb(idx));
+            return card;
+        };
+        const makeQuote = (q) => {
+            const el = document.createElement('div');
+            el.className = 'marquee-card mc-quote';
+            el.innerHTML = `<span class="mq-en">${q.en}</span><span class="mq-cn">${q.cn}</span><span class="mq-xi">囍</span>`;
+            return el;
+        };
+        groups.forEach((g, gi) => {
+            const buildSet = () => {
+                const frag = document.createDocumentFragment();
+                const qpos = Math.floor(g.list.length / 2);
+                g.list.forEach((p, j) => {
+                    frag.appendChild(makeCard(p, g.offset + j));
+                    if (j === qpos) frag.appendChild(makeQuote(g.quote));
+                });
+                return frag;
+            };
+            rows[gi].appendChild(buildSet());
+            rows[gi].appendChild(buildSet());   // duplicate → seamless loop
+        });
+    }
+
+    /* ---------------------------------------------------
        Scroll reveal
        --------------------------------------------------- */
-    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .grid, .deck, .rsvp-desc, .rsvp-form, .cd-item');
+    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .marquee, .deck, .rsvp-desc, .rsvp-form, .cd-item');
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {
