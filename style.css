@@ -536,21 +536,21 @@ body::before {
 .marquee-row.grabbing { cursor: grabbing; }
 
 .marquee-card {
-    position: relative; flex: 0 0 auto; height: clamp(206px, 22vw, 284px);
-    margin-right: 22px; border-radius: 3px; overflow: hidden; cursor: pointer;
-    background: #fdfaf2; padding: 9px 9px 30px;                 /* polaroid frame */
-    box-shadow: 0 8px 16px -10px rgba(60,30,20,.5), 0 2px 5px rgba(60,30,20,.14);
+    position: relative; flex: 0 0 auto; height: clamp(280px, 34vw, 430px);
+    margin-right: 26px; border-radius: 3px; overflow: hidden; cursor: pointer;
+    background: #fdfaf2; padding: 12px 12px 50px;               /* polaroid frame */
+    box-shadow: 0 9px 18px -10px rgba(60,30,20,.5), 0 2px 5px rgba(60,30,20,.14);
     transform: rotate(var(--tilt, 0deg)); transform-origin: center bottom;
     transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease;
 }
 .marquee-card .mc-photo { height: 100%; overflow: hidden; border-radius: 2px; background: #ece3d3; }
 .marquee-card img { height: 100%; width: auto; display: block; }
 .marquee-card .mc-cap {
-    position: absolute; left: 0; right: 0; bottom: 8px; text-align: center;
-    color: var(--red-deep); letter-spacing: .16em; font-size: .98rem; opacity: .82; transition: all .4s ease;
+    position: absolute; left: 0; right: 0; bottom: 18px; text-align: center;
+    color: var(--red-deep); letter-spacing: .16em; font-size: 1.05rem; opacity: .85; transition: all .4s ease;
 }
 .marquee-card::after {                                          /* gold inner frame on hover */
-    content: ""; position: absolute; left: 9px; right: 9px; top: 9px; bottom: 30px;
+    content: ""; position: absolute; left: 12px; right: 12px; top: 12px; bottom: 50px;
     border: 1px solid rgba(200,169,106,.6); opacity: 0; transition: opacity .4s ease; pointer-events: none;
 }
 .marquee-card:hover {
