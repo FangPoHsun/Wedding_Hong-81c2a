@@ -768,18 +768,26 @@ body::before {
     .hero { align-items: flex-end; }
     .hero-bg {
         background-image: url("images/g09.jpg");
-        /* zoom + bottom-align so the couple sits in the upper frame, clear of the text */
-        background-size: auto 122%;
+        /* strong zoom + bottom-align so the couple's faces sit high, clear of the text */
+        background-size: auto 150%;
         background-position: center bottom;
     }
     .hero-veil {
         background: linear-gradient(to bottom,
-            rgba(36,20,16,.26) 0%, rgba(36,20,16,.05) 24%, rgba(36,20,16,.20) 46%,
-            rgba(36,20,16,.66) 74%, rgba(36,20,16,.90) 100%);
+            rgba(36,20,16,.22) 0%, rgba(36,20,16,.04) 22%, rgba(36,20,16,.42) 50%,
+            rgba(36,20,16,.80) 72%, rgba(36,20,16,.93) 100%);
     }
-    .hero-inner { padding: 0 20px 84px; }
-    .hero-eyebrow { margin-bottom: 10px; font-size: .78rem; }
-    .hero-ctas { margin-top: 22px; }
+    /* compact text block so it stays in the lower zone even on short (in-app) viewports */
+    .hero-inner { padding: 0 18px 40px; }
+    .hero-eyebrow { margin-bottom: 8px; font-size: .74rem; }
+    .hero-names { font-size: clamp(1.9rem, 10vw, 2.5rem); }
+    .hero-rule { margin: 12px auto 10px; }
+    .hero-date { font-size: .9rem; margin-top: 6px; }
+    .hero-place { font-size: .92rem; margin-top: 2px; }
+    .hero-ctas { margin-top: 16px; gap: 10px; }
+    .hero-ctas .btn { padding: 12px 26px; font-size: .95rem; }
+    .scroll-cue { bottom: 12px; }
+    .scroll-cue .sc-label { font-size: .72rem; }
     .sc-mouse { display: none; }
     .sc-chevron { display: block; }
 
