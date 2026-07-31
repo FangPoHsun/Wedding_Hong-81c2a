@@ -516,104 +516,66 @@ body::before {
 /* hidden data source (feeds lightbox / marquee / deck) */
 .grid { display: none; }
 
-/* --- desktop cinematic dual-row marquee --- */
-.marquee {
-    margin-top: 28px; display: flex; flex-direction: column; gap: 8px;
-    overflow: hidden; position: relative;
+/* --- storybook: flip through the love story, page by page (desktop + mobile) --- */
+.book { max-width: 520px; margin: 26px auto 0; }
+.book-viewport { position: relative; width: 100%; aspect-ratio: 3 / 4; perspective: 2600px; }
+.page {
+    position: absolute; inset: 0; transform-origin: left center; transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.35,.05,.22,1); will-change: transform;
 }
-/* soft fade into the page at both edges — no hard boundary */
-.marquee::before, .marquee::after {
-    content: ""; position: absolute; top: 0; bottom: 0; z-index: 5; pointer-events: none;
-    width: clamp(70px, 13vw, 240px);
+.page.turned { transform: rotateY(-179deg); }
+.page-face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 3px 7px 7px 3px; overflow: hidden; background: var(--paper);
+    box-shadow: 0 22px 48px -24px rgba(60,30,20,.55), inset 0 0 0 1px rgba(200,169,106,.28);
 }
-.marquee::before { left: 0;  background: linear-gradient(90deg,  var(--paper) 12%, rgba(251,248,241,0) 100%); }
-.marquee::after  { right: 0; background: linear-gradient(270deg, var(--paper) 12%, rgba(251,248,241,0) 100%); }
-.marquee-row {
-    display: flex; overflow-x: auto; overflow-y: hidden; padding: 20px 0; cursor: grab;
-    scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior-x: contain;
+.page-front { display: flex; flex-direction: column; }
+.page-front::before {                                   /* spine-side shading */
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 26px; z-index: 4; pointer-events: none;
+    background: linear-gradient(90deg, rgba(60,30,20,.16), transparent);
 }
-.marquee-row::-webkit-scrollbar { display: none; }
-.marquee-row.grabbing { cursor: grabbing; }
+.pf-photo { flex: 1 1 auto; overflow: hidden; background: #e6dcc9; position: relative; }
+.pf-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 42%; display: block; }
+.pf-zoom {
+    position: absolute; top: 12px; right: 12px; z-index: 5; width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(36,20,16,.42); border: 1px solid rgba(247,242,232,.5); color: var(--ivory);
+    cursor: pointer; display: grid; place-items: center; backdrop-filter: blur(2px); transition: background .25s ease;
+}
+.pf-zoom svg { width: 17px; height: 17px; }
+.pf-zoom:hover { background: var(--red); }
+.pf-text { flex: 0 0 auto; text-align: center; padding: 15px 22px 20px; border-top: 1px solid rgba(200,169,106,.4); }
+.pf-ch { font-family: var(--serif-en); font-style: italic; letter-spacing: .3em; text-transform: uppercase; font-size: .7rem; color: var(--gold-deep); }
+.pf-title { font-family: var(--serif-tc); font-weight: 600; color: var(--red-deep); font-size: clamp(1.3rem,4.6vw,1.55rem); letter-spacing: .16em; margin: 3px 0 1px; }
+.pf-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .12em; color: var(--gold-deep); font-size: .86rem; }
+.pf-desc { color: var(--ink-soft); font-size: .92rem; line-height: 1.85; letter-spacing: .03em; margin-top: 7px; }
 
-.marquee-card {
-    position: relative; flex: 0 0 auto; height: clamp(280px, 34vw, 430px);
-    margin-right: 26px; border-radius: 3px; overflow: hidden; cursor: pointer;
-    background: #fdfaf2; padding: 12px 12px 50px;               /* polaroid frame */
-    box-shadow: 0 9px 18px -10px rgba(60,30,20,.5), 0 2px 5px rgba(60,30,20,.14);
-    transform: rotate(var(--tilt, 0deg)); transform-origin: center bottom;
-    transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease;
+.page-back { transform: rotateY(180deg); background: linear-gradient(135deg, var(--ivory-2), var(--paper)); }
+.page-back::after {
+    content: "囍"; position: absolute; inset: 0; display: grid; place-items: center;
+    font-family: var(--serif-tc); font-weight: 700; font-size: 3.2rem; color: rgba(200,169,106,.22);
 }
-.marquee-card .mc-photo { height: 100%; overflow: hidden; border-radius: 2px; background: #ece3d3; }
-.marquee-card img { height: 100%; width: auto; display: block; }
-.marquee-card .mc-cap {
-    position: absolute; left: 0; right: 0; bottom: 18px; text-align: center;
-    color: var(--red-deep); letter-spacing: .16em; font-size: 1.05rem; opacity: .85; transition: all .4s ease;
-}
-.marquee-card::after {                                          /* gold inner frame on hover */
-    content: ""; position: absolute; left: 12px; right: 12px; top: 12px; bottom: 50px;
-    border: 1px solid rgba(200,169,106,.6); opacity: 0; transition: opacity .4s ease; pointer-events: none;
-}
-.marquee-card:hover {
-    transform: rotate(0deg) scale(1.05) translateY(-5px); z-index: 3;
-    box-shadow: 0 14px 26px -16px rgba(60,30,20,.6);
-}
-.marquee-card:hover::after { opacity: 1; }
-.marquee-card:hover .mc-cap { opacity: 1; color: var(--red); }
-/* subtle alternating tilt — an editorial, hand-laid feel */
-.marquee-row .marquee-card:nth-child(odd)  { --tilt: -1.6deg; }
-.marquee-row .marquee-card:nth-child(even) { --tilt:  1.4deg; }
 
-/* quote card woven into the strip */
-.marquee-card.mc-quote {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-    width: clamp(220px, 22vw, 300px); padding: 24px; cursor: default;
-    background: linear-gradient(150deg, var(--ivory-2), var(--paper));
-    border: 1px solid rgba(200,169,106,.5);
-    box-shadow: 0 20px 40px -26px rgba(60,30,20,.5), inset 0 0 0 3px rgba(251,248,241,.6);
-}
-.marquee-card.mc-quote:hover { transform: rotate(0deg) translateY(-4px); }
-.mc-quote .mq-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .22em; color: var(--gold-deep); font-size: 1rem; }
-.mc-quote .mq-cn { font-family: var(--serif-tc); font-weight: 500; color: var(--red-deep); letter-spacing: .18em; font-size: 1.2rem; line-height: 1.7; text-align: center; }
-.mc-quote .mq-xi { font-family: var(--serif-tc); font-weight: 700; color: var(--gold); font-size: 1.25rem; }
+/* cover page */
+.page-cover .page-front { align-items: center; justify-content: center; text-align: center; padding: 34px;
+    background: linear-gradient(160deg, var(--red) 0%, var(--red-deep) 100%); color: var(--rice); }
+.page-cover .page-front::before { display: none; }
+.pc-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .26em; text-transform: uppercase; font-size: .92rem; color: var(--cgold); }
+.pc-names { font-family: var(--serif-tc); font-weight: 500; font-size: clamp(1.7rem,6vw,2rem); letter-spacing: .18em; margin: 20px 0 6px; }
+.pc-xi { font-family: var(--serif-tc); font-weight: 700; font-size: 2.4rem; color: var(--cgold); margin: 10px 0; }
+.pc-sub { letter-spacing: .18em; font-size: .9rem; color: var(--rice-dim); margin-top: 14px; line-height: 1.9; }
 
-
-/* --- mobile: swipe-through-photos deck (polaroid stack) --- */
-.deck { display: none; position: relative; }
-.deck-stage { position: relative; height: 500px; max-width: 340px; margin: 0 auto; touch-action: pan-y; }
-.deck-card {
-    position: absolute; left: 50%; top: 50%; width: 300px;
-    background: #fdfaf2; padding: 12px; border-radius: 3px;
-    box-shadow: 0 22px 46px -18px rgba(60,30,20,.6), 0 2px 6px rgba(60,30,20,.15);
-    will-change: transform; touch-action: pan-y; user-select: none; -webkit-user-select: none;
-    transition: transform .55s cubic-bezier(.2,.7,.2,1), opacity .45s ease;
+.book-nav { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 22px; }
+.book-btn {
+    width: 46px; height: 46px; border-radius: 50%; background: var(--paper);
+    border: 1px solid var(--gold); color: var(--red); cursor: pointer; display: grid; place-items: center;
+    box-shadow: 0 8px 18px -8px rgba(60,30,20,.4); transition: all .25s ease;
 }
-.deck-card.dragging { transition: none; }
-.deck-card .photo { overflow: hidden; background: #ece3d3; border-radius: 2px; }
-.deck-card.land .photo { aspect-ratio: 3 / 2; }
-.deck-card.port .photo { aspect-ratio: 3 / 4; }
-.deck-card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
-.deck-card .polaroid-cap {
-    text-align: center; padding: 12px 4px 4px; color: var(--ink-soft);
-    letter-spacing: .16em; font-size: 1rem;
-}
-.deck-deco { position: absolute; inset: 0; pointer-events: none; z-index: 3; color: var(--gold); }
-.deck-deco .dd { position: absolute; opacity: .5; }
-.deck-deco .dd1 { width: 22px; height: 22px; top: 6%; right: 10%; color: var(--red-soft); opacity: .45; }
-.deck-deco .dd2 { width: 16px; height: 16px; top: 16%; left: 8%; }
-.deck-deco .dd3 { width: 12px; height: 12px; bottom: 24%; right: 12%; opacity: .4; }
-.deck-ctrl { display: flex; align-items: center; justify-content: center; gap: 22px; margin-top: 22px; }
-.deck-btn {
-    width: 46px; height: 46px; border-radius: 50%;
-    background: var(--paper); border: 1px solid var(--gold); color: var(--red);
-    cursor: pointer; display: grid; place-items: center; box-shadow: 0 8px 18px -8px rgba(60,30,20,.4);
-    transition: all .25s ease;
-}
-.deck-btn svg { width: 20px; height: 20px; }
-.deck-btn:active { background: var(--red); color: var(--ivory); }
-.deck-dots { display: flex; gap: 7px; }
-.deck-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(169,134,63,.35); transition: all .3s ease; }
-.deck-dots i.on { background: var(--red); transform: scale(1.25); }
-.deck-hint { text-align: center; margin-top: 16px; color: var(--ink-soft); letter-spacing: .14em; font-size: .85rem; }
+.book-btn svg { width: 20px; height: 20px; }
+.book-btn:hover:not(:disabled) { background: var(--red); color: var(--ivory); border-color: var(--red); }
+.book-btn:disabled { opacity: .3; cursor: default; }
+.book-progress { min-width: 96px; text-align: center; letter-spacing: .14em; color: var(--ink-soft); font-size: .88rem; }
+.book-hint { text-align: center; margin-top: 14px; color: var(--ink-soft); letter-spacing: .14em; font-size: .84rem; }
+@media (prefers-reduced-motion: reduce) { .page { transition-duration: .35s; } }
 
 /* =========================================================
    RSVP
@@ -793,10 +755,8 @@ body::before {
     .sc-mouse { display: none; }
     .sc-chevron { display: block; }
 
-    /* mobile gallery: swipe-through-photos deck instead of the marquee */
-    .grid { display: none; }
-    .marquee { display: none; }
-    .deck { display: block; }
+    /* mobile: storybook fits full-width */
+    .book { max-width: 100%; }
     .gallery-lead { font-size: .96rem; }
 }
 @media (max-width: 480px) {

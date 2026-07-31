@@ -171,198 +171,117 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     /* ---------------------------------------------------
-       Gallery — mobile "flip through photos" deck (polaroid stack)
+       Gallery — storybook (page-flip through the love story)
        --------------------------------------------------- */
-    const deckStage = document.getElementById('deckStage');
-    const deckDots = document.getElementById('deckDots');
-    const deckPrev = document.getElementById('deckPrev');
-    const deckNext = document.getElementById('deckNext');
-    const photos = items.map(f => {
-        const im = f.querySelector('img');
-        return {
-            full: f.dataset.full,
-            cap: (f.dataset.cap || '').split('·')[0].trim(),
-            thumb: im.getAttribute('src'),
-            w: im.getAttribute('width') || '',
-            h: im.getAttribute('height') || ''
-        };
-    });
+    const bookViewport = document.getElementById('bookViewport');
+    const bookPrevBtn = document.getElementById('bookPrev');
+    const bookNextBtn = document.getElementById('bookNext');
+    const bookProgress = document.getElementById('bookProgress');
 
-    if (deckStage && photos.length) {
-        let cur = 0;
-        let drag = null;
-        // slight scatter so the stack looks like a real pile of prints
-        const tilt = [-2, 2.5, -3.5, 1.5, -1];
-
-        const cards = photos.map((p, i) => {
-            const card = document.createElement('div');
-            card.className = 'deck-card';
-            // reserve orientation up-front (from known dimensions) so nothing reflows on load
-            card.classList.add(Number(p.h) > Number(p.w) ? 'port' : 'land');
-            card.innerHTML =
-                `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div>` +
-                `<div class="polaroid-cap">${p.cap}</div>`;
-            card.addEventListener('pointerdown', onDown);
-            deckStage.appendChild(card);
-            const dot = document.createElement('i');
-            deckDots.appendChild(dot);
-            return card;
+    if (bookViewport && items.length) {
+        const story = items.map((f, i) => {
+            const parts = (f.dataset.cap || '').split('·');
+            return {
+                idx: i,
+                thumb: f.querySelector('img').getAttribute('src'),
+                title: (parts[0] || '').trim(),
+                en: (parts[1] || '').trim(),
+                desc: f.dataset.line || ''
+            };
         });
 
-        // base transform keeps the card centered (left/top 50%) then offsets for the stack
-        function baseTransform(pos) {
-            const t = tilt[pos % tilt.length];
-            if (pos === 0) return `translate(-50%, -50%) rotate(-1deg)`;
-            const dx = (pos % 2 ? 1 : -1) * (6 + pos * 3);
-            const dy = 6 + pos * 4;
-            return `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${t}deg) scale(${1 - pos * 0.03})`;
-        }
+        // pages = a cover, then one page per photo
+        const pageData = [{ cover: true }].concat(story);
+        const N = pageData.length;
+        let cur = 0;          // index of the current (front) page
+        let busy = false;
+
+        const pages = pageData.map((d, i) => {
+            const page = document.createElement('div');
+            page.className = 'page' + (d.cover ? ' page-cover' : '');
+            const ch = String(i).padStart(2, '0');
+            page.innerHTML =
+                '<div class="page-face page-front">' +
+                (d.cover
+                    ? '<div class="pc-en">Our Love Story</div>' +
+                      '<div class="pc-names">翔鴻 &amp; 晏瑜</div>' +
+                      '<div class="pc-xi">囍</div>' +
+                      '<div class="pc-sub">一部關於我們的電影<br>從相遇，到未完待續</div>'
+                    : '<div class="pf-photo"><img src="' + d.thumb + '" alt="">' +
+                        '<button class="pf-zoom" aria-label="放大照片">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>' +
+                      '<div class="pf-text">' +
+                        '<span class="pf-ch">Chapter ' + ch + '</span>' +
+                        '<h3 class="pf-title">' + d.title + '</h3>' +
+                        (d.en ? '<span class="pf-en">' + d.en + '</span>' : '') +
+                        '<p class="pf-desc">' + d.desc + '</p>' +
+                      '</div>'
+                ) +
+                '</div>' +
+                '<div class="page-face page-back"></div>';
+            if (!d.cover) {
+                page.querySelector('.pf-zoom').addEventListener('click', (e) => {
+                    e.stopPropagation(); openLb(d.idx);
+                });
+            }
+            bookViewport.appendChild(page);
+            return page;
+        });
+
         function layout() {
-            const len = photos.length;
-            cards.forEach((card, i) => {
-                const pos = (i - cur + len) % len;
-                card.classList.toggle('is-top', pos === 0);
-                if (pos > 3) {
-                    card.style.opacity = '0';
-                    card.style.zIndex = '0';
-                    card.style.pointerEvents = 'none';
-                    card.style.transform = baseTransform(3);
-                    return;
-                }
-                card.style.opacity = pos <= 2 ? '1' : '.5';
-                card.style.zIndex = String(len - pos);
-                card.style.pointerEvents = pos === 0 ? 'auto' : 'none';
-                card.style.transform = baseTransform(pos);
+            pages.forEach((p, i) => {
+                p.classList.toggle('turned', i < cur);
+                // current + upcoming always above the turned (read) pages; current on top
+                p.style.zIndex = (i >= cur) ? (N + (N - i)) : i;
             });
-            Array.from(deckDots.children).forEach((d, i) => d.classList.toggle('on', i === cur));
+            bookProgress.textContent = cur === 0 ? '翻開' : cur + ' / ' + (N - 1);
+            bookPrevBtn.disabled = cur === 0;
+            bookNextBtn.disabled = cur === N - 1;
         }
 
-        function onDown(e) {
-            const card = e.currentTarget;
-            if (!card.classList.contains('is-top')) return;
-            drag = { card, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false };
-            card.classList.add('dragging');
-            try { card.setPointerCapture(e.pointerId); } catch (_) {}
-            card.addEventListener('pointermove', onMove);
-            card.addEventListener('pointerup', onUp);
-            card.addEventListener('pointercancel', onUp);
-        }
-        function onMove(e) {
-            if (!drag) return;
-            drag.dx = e.clientX - drag.x0;
-            drag.dy = e.clientY - drag.y0;
-            if (Math.abs(drag.dx) + Math.abs(drag.dy) > 6) drag.moved = true;
-            drag.card.style.transform =
-                `translate(calc(-50% + ${drag.dx}px), calc(-50% + ${drag.dy * 0.35}px)) rotate(${drag.dx / 22}deg)`;
-        }
-        function onUp() {
-            if (!drag) return;
-            const { card, dx, moved } = drag;
-            drag = null;
-            card.classList.remove('dragging');
-            card.removeEventListener('pointermove', onMove);
-            card.removeEventListener('pointerup', onUp);
-            card.removeEventListener('pointercancel', onUp);
-            if (Math.abs(dx) > 60) fling(card, dx < 0 ? -1 : 1);
-            else if (!moved) { openLb(cur); layout(); }
-            else layout();
-        }
-        function fling(card, dir) {
-            const len = photos.length;
-            const throwX = dir < 0 ? -window.innerWidth : window.innerWidth;
-            card.style.transform =
-                `translate(calc(-50% + ${throwX}px), calc(-50% - 30px)) rotate(${dir < 0 ? -20 : 20}deg)`;
-            card.style.opacity = '0';
-            const finish = () => {
-                card.removeEventListener('transitionend', finish);
-                cur = (cur + 1) % len;
-                card.style.transition = 'none';
-                layout();
-                void card.offsetWidth;
-                card.style.transition = '';
-            };
-            card.addEventListener('transitionend', finish);
+        function go(dir) {
+            if (busy) return;
+            const next = cur + dir;
+            if (next < 0 || next > N - 1) return;
+            busy = true;
+            const flipping = dir > 0 ? pages[cur] : pages[next];
+            cur = next;
+            layout();
+            flipping.style.zIndex = N * 3;   // keep the turning leaf on top during the flip
+            const done = () => { flipping.removeEventListener('transitionend', done); busy = false; layout(); };
+            flipping.addEventListener('transitionend', done);
+            setTimeout(() => { if (busy) { busy = false; layout(); } }, 1200);
         }
 
-        if (deckNext) deckNext.addEventListener('click', () => fling(cards[cur], -1));
-        if (deckPrev) deckPrev.addEventListener('click', () => { cur = (cur - 1 + photos.length) % photos.length; layout(); });
+        bookNextBtn.addEventListener('click', () => go(1));
+        bookPrevBtn.addEventListener('click', () => go(-1));
+        // click the right / left half of the book to turn the page
+        bookViewport.addEventListener('click', (e) => {
+            const r = bookViewport.getBoundingClientRect();
+            go((e.clientX - r.left) > r.width / 2 ? 1 : -1);
+        });
+        // swipe on touch
+        let tx = null;
+        bookViewport.addEventListener('touchstart', (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
+        bookViewport.addEventListener('touchend', (e) => {
+            if (tx === null) return;
+            const dx = e.changedTouches[0].clientX - tx; tx = null;
+            if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
+        }, { passive: true });
+        // keyboard (when the lightbox is closed)
+        document.addEventListener('keydown', (e) => {
+            if (lightbox.classList.contains('open')) return;
+            if (e.key === 'ArrowRight') go(1);
+            else if (e.key === 'ArrowLeft') go(-1);
+        });
 
         layout();
     }
 
     /* ---------------------------------------------------
-       Gallery — desktop cinematic dual-row marquee
-       --------------------------------------------------- */
-    const marquee = document.getElementById('marquee');
-    const row = marquee ? marquee.querySelector('.marquee-row') : null;
-    if (row && photos.length) {
-        const openingQuote = { en: 'Our Love Story', cn: '從相遇<br>到未完待續' };
-        const makeCard = (p, idx) => {
-            const card = document.createElement('div');
-            card.className = 'marquee-card';
-            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
-            card.addEventListener('click', () => openLb(idx));
-            return card;
-        };
-        const makeQuote = (q) => {
-            const el = document.createElement('div');
-            el.className = 'marquee-card mc-quote';
-            el.innerHTML = `<span class="mq-en">${q.en}</span><span class="mq-cn">${q.cn}</span><span class="mq-xi">囍</span>`;
-            return el;
-        };
-        // a "title card" opens the reel; the photos then play out the story in order
-        const buildSet = () => {
-            const frag = document.createDocumentFragment();
-            frag.appendChild(makeQuote(openingQuote));
-            photos.forEach((p, i) => frag.appendChild(makeCard(p, i)));
-            return frag;
-        };
-        row.appendChild(buildSet());
-        row.appendChild(buildSet());   // duplicate → seamless loop
-
-        // gentle auto-drift + manual scroll / grab-to-pan (pauses while you interact)
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const speed = reduce ? 0 : 0.5;
-        let hovering = false, dragging = false;
-        marquee.addEventListener('pointerenter', () => hovering = true);
-        marquee.addEventListener('pointerleave', () => hovering = false);
-
-        let down = false, sx = 0, sl = 0, moved = false;
-        row.addEventListener('pointerdown', e => {
-            down = true; dragging = true; moved = false;
-            sx = e.clientX; sl = row.scrollLeft; row.classList.add('grabbing');
-            try { row.setPointerCapture(e.pointerId); } catch (_) {}
-        });
-        row.addEventListener('pointermove', e => {
-            if (!down) return;
-            const dx = e.clientX - sx;
-            if (Math.abs(dx) > 4) moved = true;
-            row.scrollLeft = sl - dx;
-        });
-        const end = () => { down = false; dragging = false; row.classList.remove('grabbing'); };
-        row.addEventListener('pointerup', end);
-        row.addEventListener('pointercancel', end);
-        row.addEventListener('pointerleave', end);
-        row.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
-
-        const startDrift = () => {
-            const tick = () => {
-                const cw = row.scrollWidth / 2;
-                if (!hovering && !dragging && speed) row.scrollLeft += speed;
-                if (row.scrollLeft >= cw) row.scrollLeft -= cw;
-                else if (row.scrollLeft <= 0) row.scrollLeft += cw;
-                requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-        };
-        if (document.readyState === 'complete') requestAnimationFrame(startDrift);
-        else window.addEventListener('load', () => requestAnimationFrame(startDrift));
-    }
-
-    /* ---------------------------------------------------
        Scroll reveal
        --------------------------------------------------- */
-    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .marquee, .deck, .rsvp-desc, .rsvp-form, .cd-item');
+    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .book, .rsvp-desc, .rsvp-form, .cd-item');
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {
