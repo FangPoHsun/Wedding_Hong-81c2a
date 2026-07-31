@@ -683,7 +683,9 @@ body::before {
 .lightbox.open { opacity: 1; visibility: visible; }
 .lb-stage { max-width: 90vw; max-height: 84vh; text-align: center; }
 .lb-stage img { max-width: 90vw; max-height: 78vh; object-fit: contain; border: 1px solid rgba(220,189,126,.5); box-shadow: 0 30px 80px rgba(0,0,0,.6); }
-.lb-stage figcaption { color: var(--gold-bright); letter-spacing: .18em; margin-top: 14px; font-size: 1.05rem; }
+.lb-stage figcaption { margin-top: 16px; }
+.lb-stage figcaption .lb-title { display: block; color: var(--gold-bright); letter-spacing: .2em; font-size: 1.18rem; }
+.lb-stage figcaption .lb-line { display: block; margin-top: 9px; color: rgba(247,242,232,.82); letter-spacing: .08em; font-size: .98rem; font-family: var(--serif-tc); }
 .lb-close, .lb-nav {
     position: absolute; background: none; border: none; color: var(--ivory);
     cursor: pointer; z-index: 2; transition: color .3s ease;

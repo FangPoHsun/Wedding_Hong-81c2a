@@ -134,7 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
         idx = (i + items.length) % items.length;
         const el = items[idx];
         lbImg.src = el.dataset.full;
-        lbCap.textContent = el.dataset.cap || '';
+        const cap = el.dataset.cap || '';
+        const line = el.dataset.line || '';
+        lbCap.innerHTML = `<span class="lb-title">${cap}</span>` + (line ? `<span class="lb-line">${line}</span>` : '');
         lbCount.textContent = `${idx + 1} / ${items.length}`;
     }
     function openLb(i) {
@@ -294,10 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const marquee = document.getElementById('marquee');
     const row = marquee ? marquee.querySelector('.marquee-row') : null;
     if (row && photos.length) {
-        const quotes = [
-            { en: "The Ocean's Vow", cn: '以海為誓<br>以歲月為證' },
-            { en: 'Forever Begins', cn: '此生所愛<br>唯有一人' }
-        ];
+        const openingQuote = { en: 'Our Love Story', cn: '從相遇<br>到未完待續' };
         const makeCard = (p, idx) => {
             const card = document.createElement('div');
             card.className = 'marquee-card';
@@ -311,16 +310,11 @@ document.addEventListener('DOMContentLoaded', () => {
             el.innerHTML = `<span class="mq-en">${q.en}</span><span class="mq-cn">${q.cn}</span><span class="mq-xi">囍</span>`;
             return el;
         };
-        // weave the two quote cards evenly through the single row
-        const q1 = Math.floor(photos.length / 3);
-        const q2 = Math.floor(2 * photos.length / 3);
+        // a "title card" opens the reel; the photos then play out the story in order
         const buildSet = () => {
             const frag = document.createDocumentFragment();
-            photos.forEach((p, i) => {
-                frag.appendChild(makeCard(p, i));
-                if (i === q1) frag.appendChild(makeQuote(quotes[0]));
-                if (i === q2) frag.appendChild(makeQuote(quotes[1]));
-            });
+            frag.appendChild(makeQuote(openingQuote));
+            photos.forEach((p, i) => frag.appendChild(makeCard(p, i)));
             return frag;
         };
         row.appendChild(buildSet());
