@@ -171,117 +171,113 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     /* ---------------------------------------------------
-       Gallery — storybook (page-flip through the love story)
+       Gallery — realistic page-flip flipbook (StPageFlip)
        --------------------------------------------------- */
-    const bookViewport = document.getElementById('bookViewport');
-    const bookPrevBtn = document.getElementById('bookPrev');
-    const bookNextBtn = document.getElementById('bookNext');
-    const bookProgress = document.getElementById('bookProgress');
-
-    if (bookViewport && items.length) {
-        const story = items.map((f, i) => {
+    const flipEl = document.getElementById('flipbook');
+    if (flipEl && items.length && window.St && St.PageFlip) {
+        const story = items.map((f) => {
+            const im = f.querySelector('img');
             const parts = (f.dataset.cap || '').split('·');
             return {
-                idx: i,
-                thumb: f.querySelector('img').getAttribute('src'),
+                idx: items.indexOf(f),
+                thumb: im.getAttribute('src'),
+                w: im.getAttribute('width') || '',
+                h: im.getAttribute('height') || '',
                 title: (parts[0] || '').trim(),
                 en: (parts[1] || '').trim(),
                 desc: f.dataset.line || ''
             };
         });
 
-        // pages = a cover, then one page per photo
-        const pageData = [{ cover: true }].concat(story);
-        const N = pageData.length;
-        let cur = 0;          // index of the current (front) page
-        let busy = false;
+        const addPage = (html, hard) => {
+            const p = document.createElement('div');
+            p.className = 'page';
+            if (hard) p.setAttribute('data-density', 'hard');
+            p.innerHTML = html;
+            flipEl.appendChild(p);
+            return p;
+        };
 
-        const pages = pageData.map((d, i) => {
-            const page = document.createElement('div');
-            page.className = 'page' + (d.cover ? ' page-cover' : '');
-            const ch = String(i).padStart(2, '0');
-            page.innerHTML =
-                '<div class="page-face page-front">' +
-                (d.cover
-                    ? '<div class="pc-en">Our Love Story</div>' +
-                      '<div class="pc-names">翔鴻 &amp; 晏瑜</div>' +
-                      '<div class="pc-xi">囍</div>' +
-                      '<div class="pc-sub">一部關於我們的電影<br>從相遇，到未完待續</div>'
-                    : '<div class="pf-photo"><img src="' + d.thumb + '" alt="">' +
-                        '<button class="pf-zoom" aria-label="放大照片">' +
-                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>' +
-                      '<div class="pf-text">' +
-                        '<span class="pf-ch">Chapter ' + ch + '</span>' +
-                        '<h3 class="pf-title">' + d.title + '</h3>' +
-                        (d.en ? '<span class="pf-en">' + d.en + '</span>' : '') +
-                        '<p class="pf-desc">' + d.desc + '</p>' +
-                      '</div>'
-                ) +
-                '</div>' +
-                '<div class="page-face page-back"></div>';
-            if (!d.cover) {
-                page.querySelector('.pf-zoom').addEventListener('click', (e) => {
-                    e.stopPropagation(); openLb(d.idx);
-                });
-            }
-            bookViewport.appendChild(page);
-            return page;
+        // front cover
+        addPage(
+            '<div class="pg pg-cover">' +
+              '<span class="pc-en">Our Love Story</span>' +
+              '<h2 class="pc-names">翔鴻 <i>&amp;</i> 晏瑜</h2>' +
+              '<span class="pc-xi">囍</span>' +
+              '<span class="pc-sub">一部關於我們的電影<br>從相遇，到未完待續</span>' +
+            '</div>', true);
+
+        // each beat = a spread: photo (left) + text (right)
+        story.forEach((d, i) => {
+            const n = String(i + 1).padStart(2, '0');
+            addPage(
+                '<div class="pg pg-photo">' +
+                  '<img src="' + d.thumb + '" width="' + d.w + '" height="' + d.h + '" alt="">' +
+                  '<button class="pg-zoom" data-idx="' + d.idx + '" aria-label="放大照片">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>' +
+                  '</button>' +
+                '</div>');
+            addPage(
+                '<div class="pg pg-text">' +
+                  '<span class="pt-ch">Chapter ' + n + '</span>' +
+                  '<h3 class="pt-title">' + d.title + '</h3>' +
+                  (d.en ? '<span class="pt-en">' + d.en + '</span>' : '') +
+                  '<div class="pt-rule"></div>' +
+                  '<p class="pt-desc">' + d.desc + '</p>' +
+                  '<span class="pt-xi">囍</span>' +
+                  '<span class="pt-no">— ' + n + ' —</span>' +
+                '</div>');
         });
 
-        function layout() {
-            pages.forEach((p, i) => {
-                p.classList.toggle('turned', i < cur);
-                // current + upcoming always above the turned (read) pages; current on top
-                p.style.zIndex = (i >= cur) ? (N + (N - i)) : i;
-            });
-            bookProgress.textContent = cur === 0 ? '翻開' : cur + ' / ' + (N - 1);
-            bookPrevBtn.disabled = cur === 0;
-            bookNextBtn.disabled = cur === N - 1;
-        }
+        // back cover
+        addPage(
+            '<div class="pg pg-cover pg-back">' +
+              '<span class="pc-en">To be continued…</span>' +
+              '<h2 class="pc-fin">未完待續</h2>' +
+              '<span class="pc-xi">囍</span>' +
+              '<span class="pc-sub">因為，我們最精彩的故事，才正要開始<br>Because our best chapter is yet to come</span>' +
+            '</div>', true);
 
-        function go(dir) {
-            if (busy) return;
-            const next = cur + dir;
-            if (next < 0 || next > N - 1) return;
-            busy = true;
-            const flipping = dir > 0 ? pages[cur] : pages[next];
-            cur = next;
-            layout();
-            flipping.style.zIndex = N * 3;   // keep the turning leaf on top during the flip
-            const done = () => { flipping.removeEventListener('transitionend', done); busy = false; layout(); };
-            flipping.addEventListener('transitionend', done);
-            setTimeout(() => { if (busy) { busy = false; layout(); } }, 1200);
-        }
-
-        bookNextBtn.addEventListener('click', () => go(1));
-        bookPrevBtn.addEventListener('click', () => go(-1));
-        // click the right / left half of the book to turn the page
-        bookViewport.addEventListener('click', (e) => {
-            const r = bookViewport.getBoundingClientRect();
-            go((e.clientX - r.left) > r.width / 2 ? 1 : -1);
+        // zoom buttons → open the full image in the lightbox
+        flipEl.querySelectorAll('.pg-zoom').forEach((btn) => {
+            btn.addEventListener('click', (e) => { e.stopPropagation(); openLb(parseInt(btn.dataset.idx, 10)); });
         });
-        // swipe on touch
-        let tx = null;
-        bookViewport.addEventListener('touchstart', (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
-        bookViewport.addEventListener('touchend', (e) => {
-            if (tx === null) return;
-            const dx = e.changedTouches[0].clientX - tx; tx = null;
-            if (Math.abs(dx) > 45) go(dx < 0 ? 1 : -1);
-        }, { passive: true });
-        // keyboard (when the lightbox is closed)
+
+        const pageFlip = new St.PageFlip(flipEl, {
+            width: 440, height: 600, size: 'stretch',
+            minWidth: 300, maxWidth: 680, minHeight: 380, maxHeight: 900,
+            drawShadow: true, maxShadowOpacity: 0.5,
+            showCover: true, usePortrait: true, mobileScrollSupport: false,
+            flippingTime: 800, swipeDistance: 30
+        });
+        pageFlip.loadFromHTML(flipEl.querySelectorAll('.page'));
+
+        const fbPage = document.getElementById('fbPage');
+        const total = pageFlip.getPageCount();
+        const setLabel = () => { fbPage.textContent = (pageFlip.getCurrentPageIndex() + 1) + ' / ' + total; };
+        setLabel();
+        pageFlip.on('flip', setLabel);
+        pageFlip.on('changeOrientation', setLabel);
+
+        document.getElementById('fbPrev').addEventListener('click', () => pageFlip.flipPrev());
+        document.getElementById('fbNext').addEventListener('click', () => pageFlip.flipNext());
         document.addEventListener('keydown', (e) => {
             if (lightbox.classList.contains('open')) return;
-            if (e.key === 'ArrowRight') go(1);
-            else if (e.key === 'ArrowLeft') go(-1);
+            if (e.key === 'ArrowRight') pageFlip.flipNext();
+            else if (e.key === 'ArrowLeft') pageFlip.flipPrev();
         });
 
-        layout();
+        const wrap = document.getElementById('flipbookWrap');
+        document.getElementById('fbFull').addEventListener('click', () => {
+            if (document.fullscreenElement) document.exitFullscreen();
+            else if (wrap.requestFullscreen) wrap.requestFullscreen().catch(() => {});
+        });
     }
 
     /* ---------------------------------------------------
        Scroll reveal
        --------------------------------------------------- */
-    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .book, .rsvp-desc, .rsvp-form, .cd-item');
+    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .fb-hint, .rsvp-desc, .rsvp-form, .cd-item');
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {

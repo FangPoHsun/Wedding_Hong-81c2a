@@ -295,21 +295,22 @@
             </figure>
         </div>
 
-        <!-- storybook: flip through the love story, page by page (built by JS) -->
-        <div class="container">
-            <div class="book" id="book">
-                <div class="book-viewport" id="bookViewport"></div>
-                <div class="book-nav">
-                    <button class="book-btn" id="bookPrev" aria-label="上一頁">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"/></svg>
-                    </button>
-                    <div class="book-progress" id="bookProgress"></div>
-                    <button class="book-btn" id="bookNext" aria-label="下一頁">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-                <p class="book-hint">點右邊翻頁 · 閱讀我們的故事</p>
+        <!-- storybook: realistic page-flip magazine (StPageFlip; pages built by JS) -->
+        <div class="flipbook-wrap" id="flipbookWrap">
+            <button class="fb-arrow fb-arrow-prev" id="fbPrev" aria-label="上一頁">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <div class="flipbook" id="flipbook"></div>
+            <button class="fb-arrow fb-arrow-next" id="fbNext" aria-label="下一頁">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+            <div class="fb-bar">
+                <span class="fb-page" id="fbPage"></span>
+                <button class="fb-btn" id="fbFull" aria-label="全螢幕">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+                </button>
             </div>
+            <p class="fb-hint">拖曳書頁 · 點兩側翻頁 · 點放大鏡看大圖</p>
         </div>
     </section>
 
@@ -438,6 +439,7 @@
         </svg>
     </button>
 
+    <script src="vendor/page-flip.browser.js"></script>
     <script src="script.js"></script>
 </body>
 
