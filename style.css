@@ -624,6 +624,12 @@ body::before {
     background: radial-gradient(circle at 50% 46%, rgba(251,248,241,.72) 0%, rgba(251,248,241,.9) 60%, var(--paper) 100%);
 }
 .deck-end.on { opacity: 1; pointer-events: auto; }
+/* Until the story actually ends, the invisible end-overlay must NOT eat swipes.
+   Its parent is pointer-events:none, but children (.de-card, .de-mini) set
+   pointer-events:auto, which re-enables hit-testing and swallows presses over
+   the deck's center — the "only part of the card is draggable" bug. Force the
+   whole subtree inert while not .on (this wins over the children's :auto). */
+.deck-end:not(.on), .deck-end:not(.on) * { pointer-events: none; }
 .deck.deck-ended .deck-card { opacity: 0 !important; }
 .de-scatter { position: absolute; inset: 0; }
 .de-mini {
