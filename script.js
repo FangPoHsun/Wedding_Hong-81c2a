@@ -269,12 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function fling(card, dir) {
             const len = photos.length;
+            const atEnd = dir < 0 && cur === len - 1;   // flung forward from the last photo → story ends
             const throwX = dir < 0 ? -window.innerWidth : window.innerWidth;
             card.style.transform =
                 `translate(calc(-50% + ${throwX}px), calc(-50% - 30px)) rotate(${dir < 0 ? -20 : 20}deg)`;
             card.style.opacity = '0';
             const finish = () => {
                 card.removeEventListener('transitionend', finish);
+                if (atEnd) { showEnd(); return; }
                 cur = (cur + 1) % len;
                 card.style.transition = 'none';
                 layout();
@@ -283,6 +285,53 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             card.addEventListener('transitionend', finish);
         }
+
+        // ---- story-end screen: scattered photos + a replay button ----
+        const deckRoot = document.getElementById('deck');
+        const deckEnd = document.createElement('div');
+        deckEnd.className = 'deck-end';
+        const scatter = document.createElement('div');
+        scatter.className = 'de-scatter';
+        const cols = 4, rows = Math.ceil(photos.length / cols);
+        photos.forEach((p, i) => {
+            const c = i % cols, r = Math.floor(i / cols);
+            const jx = ((i * 53) % 22) - 11, jy = ((i * 31) % 22) - 11;
+            const mini = document.createElement('div');
+            mini.className = 'de-mini';
+            mini.style.left = ((c + 0.5) / cols * 100 + jx * 0.5) + '%';
+            mini.style.top = ((r + 0.5) / rows * 100 + jy * 0.5) + '%';
+            mini.style.setProperty('--r', (((i * 67) % 34) - 17) + 'deg');
+            mini.style.transitionDelay = (i * 55) + 'ms';
+            mini.innerHTML = `<img src="${p.thumb}" alt="">`;
+            mini.addEventListener('click', () => openLb(i));
+            scatter.appendChild(mini);
+        });
+        const endMsg = document.createElement('div');
+        endMsg.className = 'de-msg';
+        endMsg.innerHTML =
+            '<div class="de-card">' +
+              '<span class="de-xi">囍</span>' +
+              '<span class="de-en">The End · 未完待續</span>' +
+              '<p class="de-line">謝謝你陪我們看完這一頁頁回憶<br>我們最精彩的故事，才正要開始</p>' +
+              '<button class="de-replay" type="button">↻ 重新播放</button>' +
+            '</div>';
+        deckEnd.appendChild(scatter);
+        deckEnd.appendChild(endMsg);
+        deckStage.appendChild(deckEnd);
+
+        function showEnd() {
+            deckRoot.classList.add('deck-ended');
+            requestAnimationFrame(() => deckEnd.classList.add('on'));
+        }
+        endMsg.querySelector('.de-replay').addEventListener('click', () => {
+            deckEnd.classList.remove('on');
+            deckRoot.classList.remove('deck-ended');
+            cur = 0;
+            cards.forEach(c => c.style.transition = 'none');
+            layout();
+            void deckStage.offsetWidth;
+            cards.forEach(c => c.style.transition = '');
+        });
 
         if (deckNext) deckNext.addEventListener('click', () => fling(cards[cur], -1));
         if (deckPrev) deckPrev.addEventListener('click', () => { cur = (cur - 1 + photos.length) % photos.length; layout(); });

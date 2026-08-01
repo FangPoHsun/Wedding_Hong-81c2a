@@ -616,6 +616,45 @@ body::before {
 .deck-dots i.on { background: var(--red); transform: scale(1.25); }
 .deck-hint { text-align: center; margin-top: 16px; color: var(--ink-soft); letter-spacing: .14em; font-size: .85rem; }
 
+/* story-end screen (scattered photos + replay) */
+.deck-end {
+    position: absolute; inset: -6% -4%; z-index: 20; opacity: 0; pointer-events: none;
+    transition: opacity .5s ease;
+    background: radial-gradient(circle at 50% 46%, rgba(251,248,241,.72) 0%, rgba(251,248,241,.9) 60%, var(--paper) 100%);
+}
+.deck-end.on { opacity: 1; pointer-events: auto; }
+.deck.deck-ended .deck-card { opacity: 0 !important; }
+.de-scatter { position: absolute; inset: 0; }
+.de-mini {
+    position: absolute; width: 25%;
+    transform: translate(-50%, -50%) rotate(var(--r, 0deg)) scale(.4); opacity: 0; cursor: pointer;
+    transition: transform .6s cubic-bezier(.2,.8,.25,1), opacity .5s ease;
+}
+.deck-end.on .de-mini { transform: translate(-50%, -50%) rotate(var(--r, 0deg)) scale(1); opacity: 1; }
+.de-mini img { width: 100%; display: block; background: #fff; border: 4px solid #fff; border-bottom-width: 13px; border-radius: 2px; box-shadow: 0 9px 18px -8px rgba(60,30,20,.5); }
+.de-msg {
+    position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center; pointer-events: none;
+    opacity: 0; transition: opacity .6s ease .5s;
+}
+.deck-end.on .de-msg { opacity: 1; }
+.de-card {
+    pointer-events: auto; display: flex; flex-direction: column; align-items: center;
+    max-width: 82%; padding: 22px 26px 24px; border-radius: 10px;
+    background: rgba(251,248,241,.95); border: 1px solid rgba(200,169,106,.6);
+    box-shadow: 0 22px 54px -20px rgba(60,30,20,.55); backdrop-filter: blur(3px);
+}
+.de-xi { font-family: var(--serif-tc); font-weight: 700; color: var(--gold); font-size: 1.9rem; }
+.de-en { font-family: var(--serif-en); font-style: italic; letter-spacing: .16em; color: var(--red-deep); font-size: 1.18rem; margin-top: 4px; }
+.de-line { color: var(--ink-soft); font-size: .9rem; line-height: 1.85; margin: 10px 0 20px; }
+.de-replay {
+    background: var(--red); color: var(--ivory); border: none; padding: 12px 32px; border-radius: 2px;
+    letter-spacing: .14em; font-family: var(--serif-tc); font-size: 1rem; cursor: pointer;
+    box-shadow: 0 12px 26px -10px rgba(140,31,26,.6); transition: all .3s ease;
+}
+.de-replay:hover { background: var(--red-deep); transform: translateY(-2px); }
+.deck.deck-ended .deck-ctrl, .deck.deck-ended .deck-hint { opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+
 /* =========================================================
    RSVP
    ========================================================= */
