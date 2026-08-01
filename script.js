@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ---------------------------------------------------
+       Always open at the top (show the cover on every refresh)
+       --------------------------------------------------- */
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+    window.addEventListener('load', () => window.scrollTo(0, 0));
+    window.addEventListener('pageshow', () => window.scrollTo(0, 0));
+
+    /* ---------------------------------------------------
        Wedding event constants
        --------------------------------------------------- */
     const WEDDING = {

@@ -585,9 +585,10 @@ body::before {
     position: absolute; left: 50%; top: 50%; width: min(84vw, 390px);
     background: #fdfaf2; padding: 14px; border-radius: 3px;
     box-shadow: 0 22px 46px -18px rgba(60,30,20,.6), 0 2px 6px rgba(60,30,20,.15);
-    will-change: transform; touch-action: pan-y; user-select: none; -webkit-user-select: none;
+    will-change: transform; touch-action: none; user-select: none; -webkit-user-select: none;
     transition: transform .55s cubic-bezier(.2,.7,.2,1), opacity .45s ease;
 }
+.deck-card .photo, .deck-card img { touch-action: none; }
 .deck-card.dragging { transition: none; }
 .deck-card .photo { overflow: hidden; background: #ece3d3; border-radius: 2px; }
 .deck-card.land .photo { aspect-ratio: 3 / 2; }
