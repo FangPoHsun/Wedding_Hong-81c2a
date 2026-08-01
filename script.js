@@ -197,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (deckStage && photos.length) {
+        const deckRoot = document.getElementById('deck');
         let cur = 0;
-        let drag = null;
         // slight scatter so the stack looks like a real pile of prints
         const tilt = [-2, 2.5, -3.5, 1.5, -1];
 
@@ -210,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML =
                 `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" draggable="false" alt=""></div>` +
                 `<div class="polaroid-cap">${p.cap}</div>`;
-            card.addEventListener('pointerdown', onDown);
             deckStage.appendChild(card);
             const dot = document.createElement('i');
             deckDots.appendChild(dot);
@@ -231,11 +230,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pos = (i - cur + len) % len;
                 card.classList.toggle('is-top', pos === 0);
                 if (pos > 3) {
-                    card.style.opacity = '0';
-                    card.style.zIndex = '0';
-                    card.style.pointerEvents = 'none';
-                    card.style.transform = baseTransform(3);
-                    return;
+                    card.style.opacity = '0'; card.style.zIndex = '0'; card.style.pointerEvents = 'none';
+                    card.style.transform = baseTransform(3); return;
                 }
                 card.style.opacity = pos <= 2 ? '1' : '.5';
                 card.style.zIndex = String(len - pos);
@@ -245,57 +241,60 @@ document.addEventListener('DOMContentLoaded', () => {
             Array.from(deckDots.children).forEach((d, i) => d.classList.toggle('on', i === cur));
         }
 
-        function onDown(e) {
-            const card = e.currentTarget;
-            if (!card.classList.contains('is-top')) return;
-            drag = { card, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false };
-            card.classList.add('dragging');
-            try { card.setPointerCapture(e.pointerId); } catch (_) {}
-            card.addEventListener('pointermove', onMove);
-            card.addEventListener('pointerup', onUp);
-            card.addEventListener('pointercancel', onUp);
-        }
+        // ---- swipe: press anywhere on the top card, drag it, fling to advance ----
+        let dragCard = null, sX = 0, sY = 0, dX = 0, moved = false, flinging = false;
         function onMove(e) {
-            if (!drag) return;
-            drag.dx = e.clientX - drag.x0;
-            drag.dy = e.clientY - drag.y0;
-            if (Math.abs(drag.dx) + Math.abs(drag.dy) > 6) drag.moved = true;
-            drag.card.style.transform =
-                `translate(calc(-50% + ${drag.dx}px), calc(-50% + ${drag.dy * 0.35}px)) rotate(${drag.dx / 22}deg)`;
+            if (!dragCard) return;
+            dX = e.clientX - sX;
+            const dY = e.clientY - sY;
+            if (!moved && Math.abs(dX) + Math.abs(dY) > 5) moved = true;
+            if (!moved) return;
+            dragCard.style.transform =
+                `translate(calc(-50% + ${dX}px), calc(-50% + ${dY * 0.25}px)) rotate(${dX / 24}deg)`;
         }
         function onUp() {
-            if (!drag) return;
-            const { card, dx, moved } = drag;
-            drag = null;
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onUp);
+            window.removeEventListener('pointercancel', onUp);
+            const card = dragCard; dragCard = null;
+            if (!card) return;
             card.classList.remove('dragging');
-            card.removeEventListener('pointermove', onMove);
-            card.removeEventListener('pointerup', onUp);
-            card.removeEventListener('pointercancel', onUp);
-            if (Math.abs(dx) > 60) fling(card, dx < 0 ? -1 : 1);
-            else if (!moved) { openLb(cur); layout(); }
-            else layout();
+            if (!moved) { openLb(cur); return; }
+            if (Math.abs(dX) > 55) fling(card, dX < 0 ? -1 : 1);
+            else layout();                       // spring back
         }
+        deckStage.addEventListener('pointerdown', e => {
+            if (flinging || deckRoot.classList.contains('deck-ended')) return;
+            if (!e.target.closest('.deck-card')) return;   // press on the top card (whole photo region)
+            dragCard = cards[cur];
+            sX = e.clientX; sY = e.clientY; dX = 0; moved = false;
+            dragCard.classList.add('dragging');
+            window.addEventListener('pointermove', onMove);
+            window.addEventListener('pointerup', onUp);
+            window.addEventListener('pointercancel', onUp);
+        });
+
         function fling(card, dir) {
+            if (flinging) return;
+            flinging = true;
             const len = photos.length;
             const atEnd = dir < 0 && cur === len - 1;   // flung forward from the last photo → story ends
-            const throwX = dir < 0 ? -window.innerWidth : window.innerWidth;
+            const throwX = dir < 0 ? -(window.innerWidth) : window.innerWidth;
             card.style.transform =
                 `translate(calc(-50% + ${throwX}px), calc(-50% - 30px)) rotate(${dir < 0 ? -20 : 20}deg)`;
             card.style.opacity = '0';
-            const finish = () => {
-                card.removeEventListener('transitionend', finish);
+            setTimeout(() => {                    // advance on a timer (no fragile transitionend)
+                flinging = false;
                 if (atEnd) { showEnd(); return; }
                 cur = (cur + 1) % len;
                 card.style.transition = 'none';
                 layout();
                 void card.offsetWidth;
                 card.style.transition = '';
-            };
-            card.addEventListener('transitionend', finish);
+            }, 330);
         }
 
         // ---- story-end screen: scattered photos + a replay button ----
-        const deckRoot = document.getElementById('deck');
         const deckEnd = document.createElement('div');
         deckEnd.className = 'deck-end';
         const scatter = document.createElement('div');
