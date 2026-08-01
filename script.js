@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (flinging) return;
             flinging = true;
             const len = photos.length;
-            const atEnd = dir < 0 && cur === len - 1;   // flung forward from the last photo → story ends
+            const atEnd = cur === len - 1;   // last photo, swiped either direction → story ends
             const throwX = dir < 0 ? -(window.innerWidth) : window.innerWidth;
             card.style.transform =
                 `translate(calc(-50% + ${throwX}px), calc(-50% - 30px)) rotate(${dir < 0 ? -20 : 20}deg)`;
