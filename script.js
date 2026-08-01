@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // reserve orientation up-front (from known dimensions) so nothing reflows on load
             card.classList.add(Number(p.h) > Number(p.w) ? 'port' : 'land');
             card.innerHTML =
-                `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div>` +
+                `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" draggable="false" alt=""></div>` +
                 `<div class="polaroid-cap">${p.cap}</div>`;
             card.addEventListener('pointerdown', onDown);
             deckStage.appendChild(card);
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const makeCard = (p, idx) => {
             const card = document.createElement('div');
             card.className = 'marquee-card';
-            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
+            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" draggable="false" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
             card.addEventListener('click', () => openLb(idx));
             return card;
         };
