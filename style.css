@@ -588,7 +588,7 @@ body::before {
     will-change: transform; touch-action: none; user-select: none; -webkit-user-select: none;
     transition: transform .55s cubic-bezier(.2,.7,.2,1), opacity .45s ease;
 }
-.deck-card .photo, .deck-card img { touch-action: none; }
+.deck-card, .deck-card * { touch-action: none; }   /* whole card region is swipeable */
 .deck-card.dragging { transition: none; }
 .deck-card .photo { overflow: hidden; background: #ece3d3; border-radius: 2px; }
 .deck-card.land .photo { aspect-ratio: 3 / 2; }
