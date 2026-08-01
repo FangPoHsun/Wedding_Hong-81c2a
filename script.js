@@ -252,26 +252,32 @@ document.addEventListener('DOMContentLoaded', () => {
             dragCard.style.transform =
                 `translate(calc(-50% + ${dX}px), calc(-50% + ${dY * 0.25}px)) rotate(${dX / 24}deg)`;
         }
-        function onUp() {
-            window.removeEventListener('pointermove', onMove);
-            window.removeEventListener('pointerup', onUp);
-            window.removeEventListener('pointercancel', onUp);
+        function endDrag(e) {
             const card = dragCard; dragCard = null;
             if (!card) return;
+            card.removeEventListener('pointermove', onMove);
+            card.removeEventListener('pointerup', endDrag);
+            card.removeEventListener('pointercancel', endDrag);
+            try { card.releasePointerCapture(e.pointerId); } catch (_) {}
             card.classList.remove('dragging');
             if (!moved) { openLb(cur); return; }
             if (Math.abs(dX) > 55) fling(card, dX < 0 ? -1 : 1);
-            else layout();                       // spring back
+            else layout();                       // spring back to the top of the stack
         }
+        // Press ANYWHERE on the top card — image included — and that card captures
+        // the pointer, so every move/up belongs to it no matter what's under the
+        // finger. Same technique Framer Motion uses in the shop-swipe reference.
         deckStage.addEventListener('pointerdown', e => {
             if (flinging || deckRoot.classList.contains('deck-ended')) return;
-            if (!e.target.closest('.deck-card')) return;   // press on the top card (whole photo region)
-            dragCard = cards[cur];
+            if (!e.target.closest('.deck-card')) return;   // only when the press lands on a card
+            const card = cards[cur];
+            dragCard = card;
             sX = e.clientX; sY = e.clientY; dX = 0; moved = false;
-            dragCard.classList.add('dragging');
-            window.addEventListener('pointermove', onMove);
-            window.addEventListener('pointerup', onUp);
-            window.addEventListener('pointercancel', onUp);
+            card.classList.add('dragging');
+            try { card.setPointerCapture(e.pointerId); } catch (_) {}
+            card.addEventListener('pointermove', onMove);
+            card.addEventListener('pointerup', endDrag);
+            card.addEventListener('pointercancel', endDrag);
         });
 
         function fling(card, dir) {
