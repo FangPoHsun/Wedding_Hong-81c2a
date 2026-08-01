@@ -171,113 +171,198 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
 
     /* ---------------------------------------------------
-       Gallery — realistic page-flip flipbook (StPageFlip)
+       Gallery — mobile "flip through photos" deck (polaroid stack)
        --------------------------------------------------- */
-    const flipEl = document.getElementById('flipbook');
-    if (flipEl && items.length && window.St && St.PageFlip) {
-        const story = items.map((f) => {
-            const im = f.querySelector('img');
-            const parts = (f.dataset.cap || '').split('·');
-            return {
-                idx: items.indexOf(f),
-                thumb: im.getAttribute('src'),
-                w: im.getAttribute('width') || '',
-                h: im.getAttribute('height') || '',
-                title: (parts[0] || '').trim(),
-                en: (parts[1] || '').trim(),
-                desc: f.dataset.line || ''
-            };
-        });
-
-        const addPage = (html, hard) => {
-            const p = document.createElement('div');
-            p.className = 'page';
-            if (hard) p.setAttribute('data-density', 'hard');
-            p.innerHTML = html;
-            flipEl.appendChild(p);
-            return p;
+    const deckStage = document.getElementById('deckStage');
+    const deckDots = document.getElementById('deckDots');
+    const deckPrev = document.getElementById('deckPrev');
+    const deckNext = document.getElementById('deckNext');
+    const photos = items.map(f => {
+        const im = f.querySelector('img');
+        return {
+            full: f.dataset.full,
+            cap: (f.dataset.cap || '').split('·')[0].trim(),
+            thumb: im.getAttribute('src'),
+            w: im.getAttribute('width') || '',
+            h: im.getAttribute('height') || ''
         };
+    });
 
-        // front cover
-        addPage(
-            '<div class="pg pg-cover">' +
-              '<span class="pc-en">Our Love Story</span>' +
-              '<h2 class="pc-names">翔鴻 <i>&amp;</i> 晏瑜</h2>' +
-              '<span class="pc-xi">囍</span>' +
-              '<span class="pc-sub">一部關於我們的電影<br>從相遇，到未完待續</span>' +
-            '</div>', true);
+    if (deckStage && photos.length) {
+        let cur = 0;
+        let drag = null;
+        // slight scatter so the stack looks like a real pile of prints
+        const tilt = [-2, 2.5, -3.5, 1.5, -1];
 
-        // each beat = a spread: photo (left) + text (right)
-        story.forEach((d, i) => {
-            const n = String(i + 1).padStart(2, '0');
-            addPage(
-                '<div class="pg pg-photo">' +
-                  '<img src="' + d.thumb + '" width="' + d.w + '" height="' + d.h + '" alt="">' +
-                  '<button class="pg-zoom" data-idx="' + d.idx + '" aria-label="放大照片">' +
-                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>' +
-                  '</button>' +
-                '</div>');
-            addPage(
-                '<div class="pg pg-text">' +
-                  '<span class="pt-ch">Chapter ' + n + '</span>' +
-                  '<h3 class="pt-title">' + d.title + '</h3>' +
-                  (d.en ? '<span class="pt-en">' + d.en + '</span>' : '') +
-                  '<div class="pt-rule"></div>' +
-                  '<p class="pt-desc">' + d.desc + '</p>' +
-                  '<span class="pt-xi">囍</span>' +
-                  '<span class="pt-no">— ' + n + ' —</span>' +
-                '</div>');
+        const cards = photos.map((p, i) => {
+            const card = document.createElement('div');
+            card.className = 'deck-card';
+            // reserve orientation up-front (from known dimensions) so nothing reflows on load
+            card.classList.add(Number(p.h) > Number(p.w) ? 'port' : 'land');
+            card.innerHTML =
+                `<div class="photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div>` +
+                `<div class="polaroid-cap">${p.cap}</div>`;
+            card.addEventListener('pointerdown', onDown);
+            deckStage.appendChild(card);
+            const dot = document.createElement('i');
+            deckDots.appendChild(dot);
+            return card;
         });
 
-        // back cover
-        addPage(
-            '<div class="pg pg-cover pg-back">' +
-              '<span class="pc-en">To be continued…</span>' +
-              '<h2 class="pc-fin">未完待續</h2>' +
-              '<span class="pc-xi">囍</span>' +
-              '<span class="pc-sub">因為，我們最精彩的故事，才正要開始<br>Because our best chapter is yet to come</span>' +
-            '</div>', true);
+        // base transform keeps the card centered (left/top 50%) then offsets for the stack
+        function baseTransform(pos) {
+            const t = tilt[pos % tilt.length];
+            if (pos === 0) return `translate(-50%, -50%) rotate(-1deg)`;
+            const dx = (pos % 2 ? 1 : -1) * (6 + pos * 3);
+            const dy = 6 + pos * 4;
+            return `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) rotate(${t}deg) scale(${1 - pos * 0.03})`;
+        }
+        function layout() {
+            const len = photos.length;
+            cards.forEach((card, i) => {
+                const pos = (i - cur + len) % len;
+                card.classList.toggle('is-top', pos === 0);
+                if (pos > 3) {
+                    card.style.opacity = '0';
+                    card.style.zIndex = '0';
+                    card.style.pointerEvents = 'none';
+                    card.style.transform = baseTransform(3);
+                    return;
+                }
+                card.style.opacity = pos <= 2 ? '1' : '.5';
+                card.style.zIndex = String(len - pos);
+                card.style.pointerEvents = pos === 0 ? 'auto' : 'none';
+                card.style.transform = baseTransform(pos);
+            });
+            Array.from(deckDots.children).forEach((d, i) => d.classList.toggle('on', i === cur));
+        }
 
-        // zoom buttons → open the full image in the lightbox
-        flipEl.querySelectorAll('.pg-zoom').forEach((btn) => {
-            btn.addEventListener('click', (e) => { e.stopPropagation(); openLb(parseInt(btn.dataset.idx, 10)); });
+        function onDown(e) {
+            const card = e.currentTarget;
+            if (!card.classList.contains('is-top')) return;
+            drag = { card, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false };
+            card.classList.add('dragging');
+            try { card.setPointerCapture(e.pointerId); } catch (_) {}
+            card.addEventListener('pointermove', onMove);
+            card.addEventListener('pointerup', onUp);
+            card.addEventListener('pointercancel', onUp);
+        }
+        function onMove(e) {
+            if (!drag) return;
+            drag.dx = e.clientX - drag.x0;
+            drag.dy = e.clientY - drag.y0;
+            if (Math.abs(drag.dx) + Math.abs(drag.dy) > 6) drag.moved = true;
+            drag.card.style.transform =
+                `translate(calc(-50% + ${drag.dx}px), calc(-50% + ${drag.dy * 0.35}px)) rotate(${drag.dx / 22}deg)`;
+        }
+        function onUp() {
+            if (!drag) return;
+            const { card, dx, moved } = drag;
+            drag = null;
+            card.classList.remove('dragging');
+            card.removeEventListener('pointermove', onMove);
+            card.removeEventListener('pointerup', onUp);
+            card.removeEventListener('pointercancel', onUp);
+            if (Math.abs(dx) > 60) fling(card, dx < 0 ? -1 : 1);
+            else if (!moved) { openLb(cur); layout(); }
+            else layout();
+        }
+        function fling(card, dir) {
+            const len = photos.length;
+            const throwX = dir < 0 ? -window.innerWidth : window.innerWidth;
+            card.style.transform =
+                `translate(calc(-50% + ${throwX}px), calc(-50% - 30px)) rotate(${dir < 0 ? -20 : 20}deg)`;
+            card.style.opacity = '0';
+            const finish = () => {
+                card.removeEventListener('transitionend', finish);
+                cur = (cur + 1) % len;
+                card.style.transition = 'none';
+                layout();
+                void card.offsetWidth;
+                card.style.transition = '';
+            };
+            card.addEventListener('transitionend', finish);
+        }
+
+        if (deckNext) deckNext.addEventListener('click', () => fling(cards[cur], -1));
+        if (deckPrev) deckPrev.addEventListener('click', () => { cur = (cur - 1 + photos.length) % photos.length; layout(); });
+
+        layout();
+    }
+
+    /* ---------------------------------------------------
+       Gallery — desktop cinematic dual-row marquee
+       --------------------------------------------------- */
+    const marquee = document.getElementById('marquee');
+    const row = marquee ? marquee.querySelector('.marquee-row') : null;
+    if (row && photos.length) {
+        const openingQuote = { en: 'Our Love Story', cn: '從相遇<br>到未完待續' };
+        const makeCard = (p, idx) => {
+            const card = document.createElement('div');
+            card.className = 'marquee-card';
+            card.innerHTML = `<div class="mc-photo"><img src="${p.thumb}" width="${p.w}" height="${p.h}" alt=""></div><figcaption class="mc-cap">${p.cap}</figcaption>`;
+            card.addEventListener('click', () => openLb(idx));
+            return card;
+        };
+        const makeQuote = (q) => {
+            const el = document.createElement('div');
+            el.className = 'marquee-card mc-quote';
+            el.innerHTML = `<span class="mq-en">${q.en}</span><span class="mq-cn">${q.cn}</span><span class="mq-xi">囍</span>`;
+            return el;
+        };
+        // a "title card" opens the reel; the photos then play out the story in order
+        const buildSet = () => {
+            const frag = document.createDocumentFragment();
+            frag.appendChild(makeQuote(openingQuote));
+            photos.forEach((p, i) => frag.appendChild(makeCard(p, i)));
+            return frag;
+        };
+        row.appendChild(buildSet());
+        row.appendChild(buildSet());   // duplicate → seamless loop
+
+        // gentle auto-drift + manual scroll / grab-to-pan (pauses while you interact)
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const speed = reduce ? 0 : 0.5;
+        let hovering = false, dragging = false;
+        marquee.addEventListener('pointerenter', () => hovering = true);
+        marquee.addEventListener('pointerleave', () => hovering = false);
+
+        let down = false, sx = 0, sl = 0, moved = false;
+        row.addEventListener('pointerdown', e => {
+            down = true; dragging = true; moved = false;
+            sx = e.clientX; sl = row.scrollLeft; row.classList.add('grabbing');
+            try { row.setPointerCapture(e.pointerId); } catch (_) {}
         });
-
-        const pageFlip = new St.PageFlip(flipEl, {
-            width: 440, height: 600, size: 'stretch',
-            minWidth: 300, maxWidth: 680, minHeight: 380, maxHeight: 900,
-            drawShadow: true, maxShadowOpacity: 0.5,
-            showCover: true, usePortrait: true, mobileScrollSupport: false,
-            flippingTime: 800, swipeDistance: 30
+        row.addEventListener('pointermove', e => {
+            if (!down) return;
+            const dx = e.clientX - sx;
+            if (Math.abs(dx) > 4) moved = true;
+            row.scrollLeft = sl - dx;
         });
-        pageFlip.loadFromHTML(flipEl.querySelectorAll('.page'));
+        const end = () => { down = false; dragging = false; row.classList.remove('grabbing'); };
+        row.addEventListener('pointerup', end);
+        row.addEventListener('pointercancel', end);
+        row.addEventListener('pointerleave', end);
+        row.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
 
-        const fbPage = document.getElementById('fbPage');
-        const total = pageFlip.getPageCount();
-        const setLabel = () => { fbPage.textContent = (pageFlip.getCurrentPageIndex() + 1) + ' / ' + total; };
-        setLabel();
-        pageFlip.on('flip', setLabel);
-        pageFlip.on('changeOrientation', setLabel);
-
-        document.getElementById('fbPrev').addEventListener('click', () => pageFlip.flipPrev());
-        document.getElementById('fbNext').addEventListener('click', () => pageFlip.flipNext());
-        document.addEventListener('keydown', (e) => {
-            if (lightbox.classList.contains('open')) return;
-            if (e.key === 'ArrowRight') pageFlip.flipNext();
-            else if (e.key === 'ArrowLeft') pageFlip.flipPrev();
-        });
-
-        const wrap = document.getElementById('flipbookWrap');
-        document.getElementById('fbFull').addEventListener('click', () => {
-            if (document.fullscreenElement) document.exitFullscreen();
-            else if (wrap.requestFullscreen) wrap.requestFullscreen().catch(() => {});
-        });
+        const startDrift = () => {
+            const tick = () => {
+                const cw = row.scrollWidth / 2;
+                if (!hovering && !dragging && speed) row.scrollLeft += speed;
+                if (row.scrollLeft >= cw) row.scrollLeft -= cw;
+                else if (row.scrollLeft <= 0) row.scrollLeft += cw;
+                requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        };
+        if (document.readyState === 'complete') requestAnimationFrame(startDrift);
+        else window.addEventListener('load', () => requestAnimationFrame(startDrift));
     }
 
     /* ---------------------------------------------------
        Scroll reveal
        --------------------------------------------------- */
-    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .fb-hint, .rsvp-desc, .rsvp-form, .cd-item');
+    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .marquee, .deck, .rsvp-desc, .rsvp-form, .cd-item');
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {
