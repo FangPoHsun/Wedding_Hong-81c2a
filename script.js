@@ -264,6 +264,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (Math.abs(dX) > 55) fling(card, dX < 0 ? -1 : 1);
             else layout();                       // spring back to the top of the stack
         }
+        // Kill the browser's native image drag-and-drop. Without this, pressing on
+        // a photo (an <img>) starts a ghost-image drag that hijacks the gesture, so
+        // the photo won't swipe while the plain-div frame around it still does —
+        // the exact "can only drag on the border" symptom. draggable="false" on the
+        // img covers most browsers; this is the belt-and-suspenders for the rest.
+        deckStage.addEventListener('dragstart', e => e.preventDefault());
+
         // Press ANYWHERE on the top card — image included — and that card captures
         // the pointer, so every move/up belongs to it no matter what's under the
         // finger. Same technique Framer Motion uses in the shop-swipe reference.
