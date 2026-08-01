@@ -318,7 +318,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return frag;
         };
         row.appendChild(buildSet());
-        row.appendChild(buildSet());   // duplicate → seamless loop
+        row.appendChild(buildSet());
+        row.appendChild(buildSet());   // 3 copies → a full reel of runway on each side
 
         // gentle auto-drift + manual scroll / grab-to-pan (pauses while you interact)
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -336,11 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
         row.addEventListener('pointermove', e => {
             if (!down) return;
             if (Math.abs(e.clientX - sx) > 4) moved = true;
-            const cw = row.scrollWidth / 2 || 1;
-            // incremental drag + seamless wrap, so it pans BOTH directions past the loop edge
+            const cw = row.scrollWidth / 3 || 1;
+            // incremental drag, kept inside the middle copy → pans BOTH ways with no wall
             let next = row.scrollLeft - (e.clientX - lastX);
             lastX = e.clientX;
-            next = ((next % cw) + cw) % cw;
+            next = cw + (((next - cw) % cw) + cw) % cw;
             row.scrollLeft = next;
         });
         const end = () => { down = false; dragging = false; row.classList.remove('grabbing'); };
@@ -350,11 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
         row.addEventListener('click', e => { if (moved) { e.stopPropagation(); e.preventDefault(); moved = false; } }, true);
 
         const startDrift = () => {
+            row.scrollLeft = row.scrollWidth / 3;   // start centred in the middle copy
             const tick = () => {
-                const cw = row.scrollWidth / 2;
+                const cw = row.scrollWidth / 3;
                 if (!hovering && !dragging && speed) row.scrollLeft += speed;
-                if (row.scrollLeft >= cw) row.scrollLeft -= cw;
-                else if (row.scrollLeft <= 0) row.scrollLeft += cw;
+                if (row.scrollLeft >= 2 * cw) row.scrollLeft -= cw;
+                else if (row.scrollLeft < cw) row.scrollLeft += cw;
                 requestAnimationFrame(tick);
             };
             requestAnimationFrame(tick);
