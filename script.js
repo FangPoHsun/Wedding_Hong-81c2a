@@ -327,17 +327,21 @@ document.addEventListener('DOMContentLoaded', () => {
         marquee.addEventListener('pointerenter', () => hovering = true);
         marquee.addEventListener('pointerleave', () => hovering = false);
 
-        let down = false, sx = 0, sl = 0, moved = false;
+        let down = false, sx = 0, lastX = 0, moved = false;
         row.addEventListener('pointerdown', e => {
             down = true; dragging = true; moved = false;
-            sx = e.clientX; sl = row.scrollLeft; row.classList.add('grabbing');
+            sx = lastX = e.clientX; row.classList.add('grabbing');
             try { row.setPointerCapture(e.pointerId); } catch (_) {}
         });
         row.addEventListener('pointermove', e => {
             if (!down) return;
-            const dx = e.clientX - sx;
-            if (Math.abs(dx) > 4) moved = true;
-            row.scrollLeft = sl - dx;
+            if (Math.abs(e.clientX - sx) > 4) moved = true;
+            const cw = row.scrollWidth / 2 || 1;
+            // incremental drag + seamless wrap, so it pans BOTH directions past the loop edge
+            let next = row.scrollLeft - (e.clientX - lastX);
+            lastX = e.clientX;
+            next = ((next % cw) + cw) % cw;
+            row.scrollLeft = next;
         });
         const end = () => { down = false; dragging = false; row.classList.remove('grabbing'); };
         row.addEventListener('pointerup', end);

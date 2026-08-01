@@ -531,6 +531,7 @@ body::before {
 .marquee-row {
     display: flex; overflow-x: auto; overflow-y: hidden; padding: 20px 0; cursor: grab;
     scrollbar-width: none; -ms-overflow-style: none; overscroll-behavior-x: contain;
+    user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
 }
 .marquee-row::-webkit-scrollbar { display: none; }
 .marquee-row.grabbing { cursor: grabbing; }
@@ -544,7 +545,7 @@ body::before {
     transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s ease;
 }
 .marquee-card .mc-photo { height: 100%; overflow: hidden; border-radius: 2px; background: #ece3d3; }
-.marquee-card img { height: 100%; width: auto; display: block; }
+.marquee-card img { height: 100%; width: auto; display: block; pointer-events: none; -webkit-user-drag: none; user-select: none; }
 .marquee-card .mc-cap {
     position: absolute; left: 0; right: 0; bottom: 18px; text-align: center;
     color: var(--red-deep); letter-spacing: .16em; font-size: 1.05rem; opacity: .85; transition: all .4s ease;
