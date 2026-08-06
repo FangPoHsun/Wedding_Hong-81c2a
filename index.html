@@ -10,12 +10,10 @@
     <meta property="og:description" content="2026.10.25 (日) · 台北晶華酒店 · 誠摯邀請您一同見證我們的幸福時刻">
     <meta property="og:type" content="website">
     <meta property="og:image" content="images/hero.jpg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+TC:wght@200;300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=20260802a">
+    <!-- Fonts are self-hosted (subsetted woff2) so they load everywhere, incl. mainland China where Google Fonts is blocked. -->
+    <link rel="preload" as="font" type="font/woff2" href="fonts/NotoSerifTC.subset.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="fonts/Cormorant.subset.woff2" crossorigin>
+    <link rel="stylesheet" href="style.css?v=20260803a">
 </head>
 
 <body>
@@ -227,14 +225,28 @@
                     </ul>
                     <div class="detail-actions">
                         <a class="btn btn-solid" target="_blank" rel="noopener"
-                            href="https://maps.app.goo.gl/2hbV553qevMfoLXA8">地圖導航</a>
+                            href="https://maps.app.goo.gl/2hbV553qevMfoLXA8">Google 導航</a>
                         <a class="btn btn-line" target="_blank" rel="noopener"
                             href="https://www.regenttaiwan.com/">飯店官網</a>
                     </div>
+                    <p class="detail-cn-nav">中國大陸賓客導航：
+                        <a target="_blank" rel="noopener"
+                            href="https://uri.amap.com/search?keyword=%E5%8F%B0%E5%8C%97%E6%99%B6%E8%8F%AF%E9%85%92%E5%BA%97">高德地圖</a>
+                        <span aria-hidden="true">·</span>
+                        <a target="_blank" rel="noopener"
+                            href="https://map.baidu.com/search/%E5%8F%B0%E5%8C%97%E6%99%B6%E8%8F%AF%E9%85%92%E5%BA%97">百度地圖</a>
+                    </p>
                 </article>
             </div>
 
             <div class="map-frame">
+                <!-- Fallback shown behind the embed: visible where Google Maps is blocked (e.g. mainland China). -->
+                <div class="map-fallback" aria-hidden="true">
+                    <span class="mf-xi">囍</span>
+                    <strong>台北晶華酒店 3F</strong>
+                    <span>台北市中山區中山北路二段39巷3號</span>
+                    <span class="mf-hint">中國大陸賓客請用上方「高德／百度地圖」導航</span>
+                </div>
                 <iframe
                     src="https://www.google.com/maps?q=台北晶華酒店+台北市中山區中山北路二段39巷3號&output=embed"
                     width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy"
@@ -407,6 +419,14 @@
                     或前往 Google 表單填寫 →
                 </a>
             </div>
+
+            <!-- Mainland-China guests: Google Forms is blocked there, so offer a China-accessible form.
+                 Hidden until CN_RSVP_URL is set in script.js. -->
+            <div class="rsvp-cn" id="rsvpCn" hidden>
+                <span class="rc-flag">🇨🇳</span>
+                <p>中國大陸的親友您好：由於 Google 表單在中國大陸無法開啟，<br>請改用以下專屬表單回覆出席，謝謝您！</p>
+                <a class="btn btn-solid" id="rsvpCnLink" target="_blank" rel="noopener" href="#">中國大陸賓客 · 出席回覆</a>
+            </div>
         </div>
     </section>
 
@@ -444,7 +464,7 @@
         </svg>
     </button>
 
-    <script src="script.js?v=20260802a"></script>
+    <script src="script.js?v=20260803a"></script>
 </body>
 
 </html>

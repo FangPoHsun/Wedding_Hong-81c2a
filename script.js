@@ -456,6 +456,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const rsvpStatus = document.getElementById('rsvpStatus');
     const rsvpSubmit = document.getElementById('rsvpSubmit');
 
+    /* Mainland-China RSVP: Google Forms is blocked in China. Paste the China-accessible
+       form link (問卷星 / 騰訊問卷) here and the China-guest RSVP button appears automatically. */
+    const CN_RSVP_URL = '';
+    const rsvpCn = document.getElementById('rsvpCn');
+    if (CN_RSVP_URL && rsvpCn) {
+        document.getElementById('rsvpCnLink').href = CN_RSVP_URL;
+        rsvpCn.hidden = false;
+    }
+
     const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSctGh7pWUrNPjCQebD256VH_ZgslGA7gkVcPljw2pbNYONFjQ/formResponse';
     const ENTRY = {
         name: 'entry.1006166322',

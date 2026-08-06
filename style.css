@@ -3,6 +3,24 @@
    Style: Modern Chinese Luxe (囍宴) — vermillion · gold · rice-paper
    ========================================================= */
 
+/* Self-hosted, subsetted variable fonts (one file per family covers all weights).
+   No Google Fonts dependency → renders everywhere, including mainland China. */
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-style: normal; font-weight: 300 700; font-display: swap;
+    src: url('fonts/Cormorant.subset.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Cormorant Garamond';
+    font-style: italic; font-weight: 300 700; font-display: swap;
+    src: url('fonts/Cormorant-Italic.subset.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Noto Serif TC';
+    font-style: normal; font-weight: 200 900; font-display: swap;
+    src: url('fonts/NotoSerifTC.subset.woff2') format('woff2');
+}
+
 :root {
     --red: #b5342b;
     --red-deep: #8c1f1a;
@@ -17,10 +35,12 @@
     --ink-soft: #5c5149;
     --shadow: 40px 40px 80px rgba(60, 30, 20, .10);
 
-    --serif-en: 'Cormorant Garamond', 'Noto Serif TC', serif;
-    --serif-tc: 'Noto Serif TC', serif;
+    /* System-serif fallbacks after the self-hosted fonts: covers any character not
+       in the subset AND guarantees graceful CJK rendering if a font ever fails. */
+    --serif-en: 'Cormorant Garamond', 'Noto Serif TC', Georgia, 'Times New Roman', serif;
+    --serif-tc: 'Noto Serif TC', 'Songti TC', 'Songti SC', 'Source Han Serif TC', 'Source Han Serif SC', STSong, SimSun, serif;
     /* unified: Chinese always Noto Serif TC, Latin/numerals Cormorant — no third family */
-    --brush: 'Noto Serif TC', serif;
+    --brush: 'Noto Serif TC', 'Songti TC', 'Source Han Serif TC', serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -497,12 +517,29 @@ body::before {
 .transit-list b { color: var(--red); font-weight: 600; }
 .detail-actions { margin-top: 24px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 .detail-actions .btn { padding: 11px 24px; font-size: .92rem; }
+.detail-cn-nav { margin-top: 14px; text-align: center; font-size: .82rem; color: var(--ink-soft); letter-spacing: .04em; }
+.detail-cn-nav a { color: var(--red); border-bottom: 1px solid var(--gold-soft, rgba(200,169,106,.5)); padding-bottom: 1px; }
+.detail-cn-nav a:hover { color: var(--red-deep); }
+.detail-cn-nav span { margin: 0 8px; color: var(--gold-deep); }
 
 .map-frame {
+    position: relative;
     border: 1px solid var(--gold); border-radius: 4px; overflow: hidden;
-    box-shadow: var(--shadow); line-height: 0;
+    box-shadow: var(--shadow); line-height: 0; background: var(--ivory-2);
 }
-.map-frame iframe { filter: saturate(.9) contrast(1.02); }
+/* Shown behind the embed; visible where Google Maps is blocked (mainland China). */
+.map-fallback {
+    position: absolute; inset: 0; z-index: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    text-align: center; line-height: 1.6; padding: 20px;
+    background: radial-gradient(circle at 50% 40%, var(--paper), var(--ivory-2));
+    color: var(--ink-soft);
+}
+.map-fallback .mf-xi { font-family: var(--serif-tc); color: var(--gold-deep); font-size: 1.7rem; }
+.map-fallback strong { font-family: var(--serif-tc); color: var(--red-deep); font-size: 1.15rem; letter-spacing: .04em; }
+.map-fallback span { font-size: .9rem; }
+.map-fallback .mf-hint { margin-top: 4px; font-size: .78rem; color: var(--gold-deep); }
+.map-frame iframe { position: relative; z-index: 1; filter: saturate(.9) contrast(1.02); }
 
 /* =========================================================
    GALLERY — desktop cinematic marquee + mobile photo deck
@@ -705,6 +742,13 @@ body::before {
 .rsvp-foot { display: flex; gap: 22px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
 .rsvp-alt { color: var(--gold-bright); text-decoration: none; letter-spacing: .08em; font-size: .95rem; border-bottom: 1px solid transparent; transition: border-color .3s ease; }
 .rsvp-alt:hover { border-bottom-color: var(--gold-bright); }
+.rsvp-cn {
+    margin: 30px auto 0; max-width: 460px; padding: 22px 24px; text-align: center;
+    background: rgba(255, 255, 255, .08); border: 1px solid rgba(220, 189, 126, .45); border-radius: 8px;
+}
+.rsvp-cn .rc-flag { font-size: 1.5rem; }
+.rsvp-cn p { margin: 8px 0 16px; color: var(--ivory); line-height: 1.8; font-size: .95rem; }
+.rsvp-cn .btn { padding: 12px 28px; }
 
 /* =========================================================
    FOOTER
