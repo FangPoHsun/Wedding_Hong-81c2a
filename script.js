@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* ---------------------------------------------------
-       Personalised greeting — share links like  ?to=王小明
+       Personalised greeting — cover shows 致 親愛的您 by default; a link like ?to=王小明 overrides it
        (also accepts ?name= / ?guest=). Text is set via textContent, never HTML.
        --------------------------------------------------- */
     (function personalise() {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const guest = raw.replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 24);
         if (!guest) return;
         const coverTo = document.getElementById('coverTo');
-        if (coverTo) { coverTo.textContent = `致 ${guest}`; coverTo.hidden = false; }
+        if (coverTo) coverTo.textContent = `致 ${guest}`;   // default text is 致 親愛的您
         const lead = document.getElementById('inviteLead');
         if (lead) lead.textContent = `親愛的 ${guest}：`;
         const nameField = document.getElementById('f_name');
