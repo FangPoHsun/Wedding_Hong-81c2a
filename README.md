@@ -2,7 +2,7 @@
 
 An electronic wedding invitation website for **蕭翔鴻 & 劉晏瑜**.
 
-- **Date:** 2026.10.25 (Sunday) · reception 18:00–22:00 (arrive 17:30)
+- **Date:** 2026.10.25 (Sunday) · reception 18:30–22:00 (arrive 18:00)
 - **Venue:** 台北晶華酒店 (Regent Taipei), 3F — 台北市中山區中山北路二段39巷3號
 
 ## Structure

@@ -12,12 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
        Wedding event constants
        --------------------------------------------------- */
     const WEDDING = {
-        // 2026-10-25 18:00 Asia/Taipei
-        target: new Date('2026-10-25T18:00:00+08:00'),
+        // 2026-10-25 18:30 Asia/Taipei (banquet start; entrance 18:00)
+        target: new Date('2026-10-25T18:30:00+08:00'),
         title: '翔鴻 & 晏瑜 婚禮',
-        desc: '翔鴻 & 晏瑜 的婚禮\\n\\n入場 17:30 · 婚宴 18:00–22:00\\n\\n地點：台北晶華酒店 3樓\\n地址：台北市中山區中山北路二段39巷3號',
+        desc: '翔鴻 & 晏瑜 的婚禮\\n\\n入場 18:00 · 婚宴 18:30–22:00\\n\\n地點：台北晶華酒店 3樓\\n地址：台北市中山區中山北路二段39巷3號',
         location: '台北晶華酒店, 台北市中山區中山北路二段39巷3號',
-        start: '20261025T180000',
+        start: '20261025T183000',
         end: '20261025T220000'
     };
 
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="cal-box">
                     <div class="foot-xi" style="font-size:2rem">囍</div>
                     <h3>加入行事曆</h3>
-                    <p>別錯過我們的大喜之日<br>2026 / 10 / 25 (日) 18:00</p>
+                    <p>別錯過我們的大喜之日<br>2026 / 10 / 25 (日) 18:30</p>
                     <div class="cal-buttons">
                         <a class="btn btn-solid" id="calGoogle" href="${gcalUrl()}" target="_blank" rel="noopener">Google 日曆</a>
                         <button class="btn btn-line" id="calIcs">下載 .ics 檔（Apple / Outlook）</button>
