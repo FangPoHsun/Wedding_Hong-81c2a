@@ -154,6 +154,12 @@ body::before {
     font-family: var(--serif-tc); font-size: 12px; letter-spacing: .62em; text-indent: .62em;
     color: var(--rice-faint); font-weight: 400;
 }
+.cover-to {
+    margin-bottom: clamp(14px,3vh,26px);
+    font-family: var(--serif-tc); font-size: clamp(13px,3.4vw,15px); letter-spacing: .3em; text-indent: .3em;
+    color: var(--cgold); font-weight: 400;
+}
+.cover-to[hidden] { display: none; }
 .cover-names { display: flex; align-items: center; justify-content: center; }
 .cover-name {
     writing-mode: vertical-rl; text-orientation: upright;
@@ -315,6 +321,15 @@ body::before {
     animation: heroZoom 14s ease-out forwards;
 }
 @keyframes heroZoom { to { transform: scale(1); } }
+/* slow crossfade layers stacked on the base photo; JS assigns the images and cycles .is-on (desktop only) */
+.hero-slide {
+    position: absolute; inset: -2%;
+    background: center 35%/cover no-repeat;
+    opacity: 0; transition: opacity 1.8s ease-in-out;
+    transform: scale(1);
+}
+.hero-slide.is-on { opacity: 1; animation: heroKen 9s ease-out forwards; }
+@keyframes heroKen { from { transform: scale(1.06); } to { transform: scale(1); } }
 .hero-veil {
     position: absolute; inset: 0;
     background:
@@ -521,6 +536,42 @@ body::before {
 .detail-cn-nav a { color: var(--red); border-bottom: 1px solid var(--gold-soft, rgba(200,169,106,.5)); padding-bottom: 1px; }
 .detail-cn-nav a:hover { color: var(--red-deep); }
 .detail-cn-nav span { margin: 0 8px; color: var(--gold-deep); }
+
+/* --- programme timeline --- */
+.programme {
+    background: var(--paper); border: 1px solid rgba(200,169,106,.5); border-radius: 4px;
+    padding: 34px 30px 30px; margin-bottom: 40px; text-align: center;
+    box-shadow: 0 30px 60px -40px rgba(60,30,20,.45); position: relative; overflow: hidden;
+}
+.programme::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--gold), var(--red), var(--gold));
+}
+.prog-title {
+    font-family: var(--serif-tc); font-weight: 600; letter-spacing: .2em; color: var(--red-deep);
+    font-size: 1.3rem; margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+}
+.prog-title .sec-kicker { font-size: .85rem; letter-spacing: .3em; }
+.prog-line {
+    list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    position: relative; max-width: 900px; margin: 0 auto;
+}
+.prog-line::before {
+    content: ""; position: absolute; left: 12.5%; right: 12.5%; top: 7px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 10%, var(--gold) 90%, transparent);
+}
+.prog-item { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 24px; }
+.prog-dot {
+    position: absolute; top: 0; left: 50%; width: 15px; height: 15px; transform: translateX(-50%);
+    border-radius: 50%; background: var(--paper); border: 1px solid var(--gold-deep);
+    box-shadow: 0 0 0 4px var(--paper);
+}
+.prog-dot::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--red);
+}
+.prog-time { font-family: var(--serif-en); font-weight: 600; font-size: 1.55rem; color: var(--red); letter-spacing: .06em; line-height: 1.2; }
+.prog-name { font-family: var(--serif-tc); font-weight: 600; letter-spacing: .16em; color: var(--ink); margin-top: 6px; }
+.prog-sub { font-size: .85rem; letter-spacing: .06em; color: var(--ink-soft); margin-top: 4px; }
 
 .map-frame {
     position: relative;
@@ -761,6 +812,13 @@ body::before {
 .foot-names { font-family: var(--serif-tc); font-size: 1.6rem; letter-spacing: .2em; margin-top: 10px; }
 .foot-date { letter-spacing: .24em; margin-top: 8px; opacity: .85; }
 .foot-thanks { margin-top: 18px; font-family: var(--serif-en); font-style: italic; letter-spacing: .1em; opacity: .8; }
+.foot-share {
+    margin-top: 26px; color: var(--ivory); border-color: var(--gold-bright);
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 26px; font-size: .95rem;
+}
+.foot-share svg { width: 18px; height: 18px; stroke-linecap: round; stroke-linejoin: round; }
+.foot-share:hover { background: var(--ivory); color: var(--red-deep); border-color: var(--ivory); }
+.foot-share-status { margin-top: 12px; font-size: .86rem; letter-spacing: .08em; opacity: .85; min-height: 1.4em; }
 
 /* =========================================================
    LIGHTBOX
@@ -884,6 +942,21 @@ body::before {
     .sc-mouse { display: none; }
     .sc-chevron { display: block; }
 
+    /* mobile hero stays a single tuned portrait — no crossfade layers, no extra downloads */
+    .hero-slide { display: none; }
+
+    /* programme: vertical timeline */
+    .programme { padding: 28px 22px 24px; }
+    .prog-line { grid-template-columns: 1fr; gap: 0; max-width: 320px; }
+    .prog-line::before { left: 7px; right: auto; top: 10px; bottom: 10px; width: 1px; height: auto;
+        background: linear-gradient(180deg, transparent, var(--gold) 8%, var(--gold) 92%, transparent); }
+    .prog-item { display: grid; grid-template-columns: 76px 1fr; grid-template-rows: auto auto; column-gap: 14px;
+        align-items: baseline; text-align: left; padding: 10px 0 10px 28px; }
+    .prog-dot { top: 16px; left: 7px; }
+    .prog-time { grid-row: 1 / span 2; font-size: 1.3rem; }
+    .prog-name { margin-top: 0; }
+    .prog-sub { margin-top: 0; }
+
     /* mobile gallery: swipe-through-photos deck instead of the marquee */
     .grid { display: none; }
     .marquee { display: none; }
@@ -921,5 +994,6 @@ body::before {
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .001s !important; transition-duration: .2s !important; }
     .hero-bg { animation: none; transform: none; }
+    .hero-slide { animation: none; transform: none; transition: none; }
     .sc-mouse i, .sc-chevron { animation: none; }
 }

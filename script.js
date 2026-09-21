@@ -22,6 +22,26 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* ---------------------------------------------------
+       Personalised greeting — share links like  ?to=王小明
+       (also accepts ?name= / ?guest=). Text is set via textContent, never HTML.
+       --------------------------------------------------- */
+    (function personalise() {
+        let raw = '';
+        try {
+            const q = new URLSearchParams(location.search);
+            raw = q.get('to') || q.get('name') || q.get('guest') || '';
+        } catch (_) { return; }
+        const guest = raw.replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 24);
+        if (!guest) return;
+        const coverTo = document.getElementById('coverTo');
+        if (coverTo) { coverTo.textContent = `致 ${guest}`; coverTo.hidden = false; }
+        const lead = document.getElementById('inviteLead');
+        if (lead) lead.textContent = `親愛的 ${guest}：`;
+        const nameField = document.getElementById('f_name');
+        if (nameField && !nameField.value) nameField.value = guest;
+    })();
+
+    /* ---------------------------------------------------
        Cover — lacquer gatefold
        --------------------------------------------------- */
     const cover = document.getElementById('cover');
@@ -127,6 +147,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     tickCountdown();
     const cdTimer = setInterval(tickCountdown, 1000);
+
+    /* ---------------------------------------------------
+       Hero — slow crossfade (desktop only; phones keep the single tuned portrait)
+       --------------------------------------------------- */
+    (function heroCrossfade() {
+        const slides = Array.from(document.querySelectorAll('.hero-slide'));
+        const hero = document.getElementById('home');
+        if (slides.length < 2 || !hero) return;
+        const desktop = window.matchMedia('(min-width: 861px)');
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!desktop.matches || reduce) return;
+
+        let i = 0, timer = null, visible = true;
+        const ready = new Set();
+        const load = (n) => new Promise(res => {
+            const el = slides[n];
+            if (ready.has(n)) return res();
+            const im = new Image();
+            im.onload = () => { el.style.backgroundImage = `url("${el.dataset.src}")`; ready.add(n); res(); };
+            im.onerror = () => res();
+            im.src = el.dataset.src;
+        });
+        const next = () => {
+            if (!visible || document.hidden) return;
+            const n = (i + 1) % slides.length;
+            load(n).then(() => {
+                if (!ready.has(n)) return;
+                slides[i].classList.remove('is-on');
+                slides[n].classList.add('is-on');
+                i = n;
+            });
+        };
+        const start = () => { if (!timer) timer = setInterval(next, 7000); };
+        const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+
+        // first slide is the same photo as the CSS base, so it appears without any flash
+        load(0).then(() => {
+            slides.slice(1).forEach((_, k) => load(k + 1));   // warm the rest while the cover is up
+            start();
+        });
+        // only spend CPU while the hero is on screen
+        const io = new IntersectionObserver(en => {
+            visible = en[0].isIntersecting;
+            if (visible) start(); else stop();
+        }, { threshold: 0.05 });
+        io.observe(hero);
+        document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (visible) start(); });
+        // if the window is resized down to phone width, freeze on the base photo
+        desktop.addEventListener('change', e => { if (!e.matches) stop(); else if (visible) start(); });
+    })();
 
     /* ---------------------------------------------------
        Gallery lightbox
@@ -437,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ---------------------------------------------------
        Scroll reveal
        --------------------------------------------------- */
-    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .map-frame, .marquee, .deck, .rsvp-desc, .rsvp-form, .cd-item');
+    const revealEls = document.querySelectorAll('.details-hotel, .sec-head, .gallery-lead, .invite-lead, .invite-text, .invite-sign, .invite-quote, .detail-card, .programme, .map-frame, .marquee, .deck, .rsvp-desc, .rsvp-form, .cd-item');
     revealEls.forEach(el => el.classList.add('reveal'));
     const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {
@@ -619,4 +689,31 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('open');
     }
     if (calBtn) calBtn.addEventListener('click', openCalModal);
+
+    /* ---------------------------------------------------
+       Share — native share sheet where available, otherwise copy the link
+       --------------------------------------------------- */
+    const shareBtn = document.getElementById('shareBtn');
+    const shareStatus = document.getElementById('shareStatus');
+    if (shareBtn) {
+        const shareUrl = location.origin + location.pathname;   // clean link, no personal ?to= name
+        const shareText = '翔鴻 & 晏瑜 婚禮邀請 · 2026.10.25 (日) · 台北晶華酒店';
+        const say = (msg) => {
+            if (!shareStatus) return;
+            shareStatus.textContent = msg;
+            setTimeout(() => { if (shareStatus.textContent === msg) shareStatus.textContent = ''; }, 3500);
+        };
+        shareBtn.addEventListener('click', async () => {
+            if (navigator.share) {
+                try { await navigator.share({ title: WEDDING.title, text: shareText, url: shareUrl }); return; }
+                catch (_) { return; }   // user dismissed the sheet
+            }
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                say('已複製連結，貼上即可分享 ♥');
+            } catch (_) {
+                say(shareUrl);
+            }
+        });
+    }
 });

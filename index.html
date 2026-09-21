@@ -6,14 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>翔鴻 & 晏瑜 · 婚禮邀請 Wedding Invitation</title>
     <meta name="description" content="翔鴻 & 晏瑜 誠摯邀請您參加我們的婚禮 — 2026.10.25 · 台北晶華酒店">
+    <!-- Share preview (LINE / WeChat / Facebook / iMessage). These MUST be absolute URLs. -->
     <meta property="og:title" content="翔鴻 & 晏瑜 婚禮邀請">
     <meta property="og:description" content="2026.10.25 (日) · 台北晶華酒店 · 誠摯邀請您一同見證我們的幸福時刻">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="images/hero.jpg">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:url" content="https://fangpohsun.github.io/Wedding_Hong-81c2a/">
+    <meta property="og:image" content="https://fangpohsun.github.io/Wedding_Hong-81c2a/images/hero.jpg">
+    <meta property="og:image:width" content="1000">
+    <meta property="og:image:height" content="667">
+    <meta property="og:image:alt" content="翔鴻 & 晏瑜 婚紗照">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#8c1f1a">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="images/favicon-64.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     <!-- Fonts are self-hosted (subsetted woff2) so they load everywhere, incl. mainland China where Google Fonts is blocked. -->
     <link rel="preload" as="font" type="font/woff2" href="fonts/NotoSerifTC.subset.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="fonts/Cormorant.subset.woff2" crossorigin>
-    <link rel="stylesheet" href="style.css?v=20260803a">
+    <link rel="stylesheet" href="style.css?v=20260921b">
 </head>
 
 <body>
@@ -32,6 +43,7 @@
 
         <div class="cover-content" id="coverContent">
             <p class="cover-kicker">謹 訂 於</p>
+            <p class="cover-to" id="coverTo" hidden></p>
 
             <div class="cover-names" aria-label="翔鴻與晏瑜">
                 <div class="cover-name">翔鴻</div>
@@ -97,7 +109,13 @@
 
     <!-- ============ HERO ============ -->
     <header id="home" class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bg">
+            <!-- desktop-only slow crossfade; JS assigns the images so phones never download them -->
+            <div class="hero-slide is-on" data-src="images/hero.jpg"></div>
+            <div class="hero-slide" data-src="images/g04.jpg"></div>
+            <div class="hero-slide" data-src="images/g03-carry.jpg"></div>
+            <div class="hero-slide" data-src="images/g08-ceremony.jpg"></div>
+        </div>
         <div class="hero-veil"></div>
         <div class="hero-inner">
             <p class="hero-eyebrow">誠摯邀請 · You are invited</p>
@@ -145,7 +163,7 @@
                 <h2 class="sec-title">我們要結婚啦</h2>
                 <div class="gold-flourish" aria-hidden="true"></div>
             </div>
-            <p class="invite-lead">親愛的長輩、親戚與朋友們：</p>
+            <p class="invite-lead" id="inviteLead">親愛的長輩、親戚與朋友們：</p>
             <p class="invite-text">
                 我們曾各自奔赴人海，直到目光交匯的那一刻，才懂歸屬感的意義。<br>
                 誠邀生命中重要的你，來見證這場「雙向奔赴」的圓滿；<br>
@@ -237,6 +255,37 @@
                             href="https://map.baidu.com/search/%E5%8F%B0%E5%8C%97%E6%99%B6%E8%8F%AF%E9%85%92%E5%BA%97">百度地圖</a>
                     </p>
                 </article>
+            </div>
+
+            <!-- PROGRAMME -->
+            <div class="programme">
+                <p class="prog-title"><span class="sec-kicker">Programme</span>當日流程</p>
+                <ol class="prog-line">
+                    <li class="prog-item">
+                        <span class="prog-dot" aria-hidden="true"></span>
+                        <b class="prog-time">18:00</b>
+                        <span class="prog-name">賓客入場</span>
+                        <span class="prog-sub">報到 · 合影 · 迎賓</span>
+                    </li>
+                    <li class="prog-item">
+                        <span class="prog-dot" aria-hidden="true"></span>
+                        <b class="prog-time">18:30</b>
+                        <span class="prog-name">婚宴開席</span>
+                        <span class="prog-sub">新人進場 · 敬酒</span>
+                    </li>
+                    <li class="prog-item">
+                        <span class="prog-dot" aria-hidden="true"></span>
+                        <b class="prog-time">席間</b>
+                        <span class="prog-name">分享與祝福</span>
+                        <span class="prog-sub">影片 · 遊戲 · 合照</span>
+                    </li>
+                    <li class="prog-item">
+                        <span class="prog-dot" aria-hidden="true"></span>
+                        <b class="prog-time">22:00</b>
+                        <span class="prog-name">圓滿禮成</span>
+                        <span class="prog-sub">送客 · 期待再相聚</span>
+                    </li>
+                </ol>
             </div>
 
             <div class="map-frame">
@@ -436,6 +485,11 @@
         <p class="foot-names">翔鴻 &amp; 晏瑜</p>
         <p class="foot-date">2026 . 10 . 25 · 台北晶華酒店</p>
         <p class="foot-thanks">期待與您相遇，共享這份喜悅</p>
+        <button class="btn btn-line foot-share" id="shareBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a1 1 0 001 1h12a1 1 0 001-1v-5"/></svg>
+            分享給親友
+        </button>
+        <p class="foot-share-status" id="shareStatus" role="status"></p>
     </footer>
 
     <!-- ============ LIGHTBOX ============ -->
@@ -464,7 +518,7 @@
         </svg>
     </button>
 
-    <script src="script.js?v=20260921a"></script>
+    <script src="script.js?v=20260921b"></script>
 </body>
 
 </html>
